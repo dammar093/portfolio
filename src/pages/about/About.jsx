@@ -131,7 +131,7 @@ const About = () => {
         </div>
       </div>
       <div className='w-full py-10'>
-        <div className='w-full mt-12'>
+        <div className='w-full my-12'>
           <h2 className='text-white text-3xl font-bold uppercase text-center'>Skills</h2>
           <div className='flex justify-center flex-wrap gap-6  mt-12'>
             {
