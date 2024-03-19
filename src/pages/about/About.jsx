@@ -130,6 +130,7 @@ const About = () => {
           </div>
         </div>
       </div>
+      <br />
       <div className='w-full py-10'>
         <div className='w-full my-12'>
           <h2 className='text-white text-3xl font-bold uppercase text-center'>Skills</h2>

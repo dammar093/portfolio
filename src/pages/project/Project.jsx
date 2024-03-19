@@ -98,9 +98,9 @@ const Project = () => {
             </div>
           </Link>
         </div>
-        <h2 className='text-white text-3xl font-semibold text-center uppercase'>Projects</h2>
 
         <div className='w-full mt-10 flex justify-center gap-4 flex-wrap'>
+
           {
             data.map((item) => (
               <div className='glassEffect w-[300px] p-4 project ' key={item.id}>
