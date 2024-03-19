@@ -1,4 +1,3 @@
-import React, { useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import image from "../../assets/image.png"
 import { IoMdPerson, IoMdCall } from "react-icons/io";
@@ -12,7 +11,7 @@ import "./Home.css"
 import { useGSAP } from '@gsap/react';
 
 const Home = () => {
-  const [stop, setStop] = useState(false)
+
 
   const links = [
     {
@@ -106,8 +105,8 @@ const Home = () => {
     <section className="h-screen w-full overflow-hidden bgColor flex justify-center items-center flex-col p-2 md:p-4" id='home'  >
 
       <div className="text-center" id='text'>
-        <p className="text-white md:text-3xl uppercase font-extrabold text-sm mt-20 ">👋 Hello It's me Dammar</p>
-        <p className='text-white md:text-xl uppercase font-semibold text-sm'>Front-End Developer</p>
+        <p className="text-white md:text-4xl text-2xl uppercase font-extrabold mt-20 ">👋 Hello It's me Dammar</p>
+        <p className='text-white md:text-xl uppercase font-semibold text-xl'>Front-End Developer</p>
       </div>
 
       <div className='w-full flex justify-center items-center'>
