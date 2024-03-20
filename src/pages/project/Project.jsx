@@ -89,7 +89,7 @@ const Project = () => {
   });
 
   return (
-    <section className='bgColor w-full md:px-10 p-2'>
+    <section className='bgColor w-full md:px-10 p-2 overflow-y-scroll scroll-smooth'>
       <div className='min-h-screen w-full'>
         <div className='w-10 h-10 sticky top-10 z-10'>
           <Link to="/" className='w-10 h-10 rounded-full p-10 sticky top-0 z-10'>
