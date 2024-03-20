@@ -75,7 +75,7 @@ const Project = () => {
       gsap.from(project, {
         opacity: 0,
         scale: 0,
-        stagger: 1,
+        y: 20,
         scrollTrigger: {
           trigger: project,
           start: "0 90%",
@@ -103,7 +103,7 @@ const Project = () => {
 
           {
             data.map((item) => (
-              <div className='glassEffect w-[300px] p-4 project ' key={item.id}>
+              <div className='glassEffect w-[300px] p-4 project  transition-all delay-300 ease-linear' key={item.id}>
                 <img className='w-full h-[200px] object-contain' src={item.image} alt={item.titel} />
                 <div className='w-full p-2'>
                   <h2 className='text-white text-md font-semibold'>{item.titel}</h2>
