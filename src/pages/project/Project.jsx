@@ -74,7 +74,7 @@ const Project = () => {
     projects.forEach((project) => {
       gsap.from(project, {
         opacity: 0,
-        y: 100,
+        scale: 0,
         stagger: 1,
         scrollTrigger: {
           trigger: project,
