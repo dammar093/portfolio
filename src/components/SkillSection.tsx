@@ -41,12 +41,12 @@ const skills = [
   {
     id: 8,
     name: "Express.js",
-    icon: "/express.png",
+    icon: "/Express.png",
   },
   {
     id: 9,
     name: "MongoDB",
-    icon: "/mongodb.png",
+    icon: "/MongoDB.png",
   },
   {
     id: 10,
