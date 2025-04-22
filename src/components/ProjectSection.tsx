@@ -7,7 +7,7 @@ export const projects = [
     name: "Ecommerce",
     description: "A full-stack ecommerce website.",
     image: "/mart.png",
-    link: "https://github.com/dammar093/ecommerce",
+    link: "https://mart-liart.vercel.app",
     stack: [
       "React.js",
       "Node.js",
