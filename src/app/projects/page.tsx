@@ -10,7 +10,7 @@ const Projects = () => {
         name="description"
         content="Explore projects showcasing my work and skills. Visit my GitHub for more details."
       />
-      <title>Projects - Portfolio</title>
+      <title>Projects - Dammar</title>
       <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
         Projects
       </h1>

@@ -17,11 +17,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dammar Singh Rana",
+  title: "Dammar",
   description:
     "I'm a software engineer with a passion for building web applications. I love to learn new technologies and improve my skills.",
   keywords:
-    "Dammar Singh Rana, software engineer, web developer, full stack developer, JavaScript, TypeScript, React, Next.js, Node.js, Express.js, MongoDB",
+    "Dammar Singh Rana, software engineer, web developer, full stack developer, JavaScript, TypeScript, React, Next.js, Node.js, Express.js, MongoDB, dyams",
 };
 
 export default function RootLayout({
