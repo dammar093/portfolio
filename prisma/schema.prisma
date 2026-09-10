@@ -8,16 +8,16 @@ datasource db {
 }
 
 enum Role {
-  admin
-  user
+  ADMIN
+  USER
 }
 
 model User {
-  id       String @id @default(uuid())
-  email    String @unique
+  id       String  @id @default(uuid())
+  email    String  @unique
   password String
-
-  role Role @default(user)
+  avatar   String?
+  role     Role    @default(ADMIN)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -26,12 +26,12 @@ model User {
 }
 
 model Project {
-  id          String @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
-  description String @db.Text
-  image       String
+  description String  @db.Text
+  image       String?
   link        String
-  order       Int    @default(1)
+  order       Int     @default(1)
 
   languages ProjectLanguage[]
 
@@ -42,10 +42,10 @@ model Project {
 }
 
 model Language {
-  id    String @id @default(uuid())
-  name  String @unique
-  image String
-  order Int    @default(1)
+  id    String  @id @default(uuid())
+  name  String  @unique
+  image String?
+  order Int     @default(1)
 
   projects ProjectLanguage[]
 
@@ -68,15 +68,22 @@ model ProjectLanguage {
   @@index([languageId])
 }
 
-model Settings {
-  id          String @id @default("550e8400-e29b-41d4-a716-446655440000")
-  name        String
-  email       String
-  phone       String
-  description String @db.Text
-  logo        String
+model Setting {
+  id             String  @id @default("550e8400-e29b-41d4-a716-446655440000")
+  name           String
+  email          String
+  phone          String
+  description    String  @db.Text
+  logo           String?
+  g_tag          String?
+  address        String
+  linkedin_link  String?
+  github_link    String?
+  youtube_link   String?
+  facebook_link  String?
+  instagram_link String?
 
-  g_tag String?
+  seo Seo?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -85,12 +92,14 @@ model Settings {
 }
 
 model Page {
-  id          String @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
-  short_title String @db.Text
-  slug        String @unique
-  image       String
-  description String @db.Text
+  short_title String  @db.Text
+  slug        String  @unique
+  image       String?
+  description String  @db.Text
+
+  seo Seo?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -98,14 +107,69 @@ model Page {
   @@index([id])
 }
 
+enum SeoType {
+  PAGE
+  SETTING
+  BLOG
+}
+
 model Seo {
-  id             String @id @default(uuid())
-  og_ttile       String @db.Text
-  slug           String @unique
-  og_description String @db.Text
-  og_image       String
-  keywords       String @db.Text
+  id             String  @id @default(uuid())
+  og_ttile       String  @db.Text
+  slug           String  @unique
+  og_description String  @db.Text
+  og_image       String?
+  keywords       String?  @db.Text
   schema_markup  Json?
+
+  seo_type SeoType
+
+  page_id String @unique
+  page    Page   @relation(fields: [page_id], references: [id], onDelete: Cascade)
+
+  setting_id String  @unique
+  setting    Setting @relation(fields: [setting_id], references: [id], onDelete: Cascade)
+
+  blog_id String @unique
+  blog    Blog   @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Services {
+  id          String  @id @default(uuid())
+  title       String
+  description String  @db.Text
+  image       String?
+  order       Int     @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Testimonial {
+  id       String  @id @default(uuid())
+  name     String
+  avatar   String?
+  position String
+  company  String
+  testimonial String
+  order    Int     @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Blog {
+  id          String  @id @default(uuid())
+  title       String
+  slug        String  @unique
+  description String  @db.Text
+  image       String?
+
+  order Int  @default(1)
+  seo   Seo?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
