@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  admin
+  user
+}
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+
+  role Role @default(user)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id, email])
+}
+
+model Project {
+  id          String @id @default(uuid())
+  title       String
+  description String @db.Text
+  image       String
+  link        String
+  order       Int    @default(1)
+
+  languages ProjectLanguage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
+}
+
+model Language {
+  id    String @id @default(uuid())
+  name  String @unique
+  image String
+  order Int    @default(1)
+
+  projects ProjectLanguage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
+}
+
+model ProjectLanguage {
+  projectId  String
+  languageId String
+  language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([projectId, languageId])
+  @@index([languageId])
+}
+
+model Settings {
+  id          String @id @default("550e8400-e29b-41d4-a716-446655440000")
+  name        String
+  email       String
+  phone       String
+  description String @db.Text
+  logo        String
+
+  g_tag String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
+}
+
+model Page {
+  id          String @id @default(uuid())
+  title       String
+  short_title String @db.Text
+  slug        String @unique
+  image       String
+  description String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
+}
+
+model Seo {
+  id             String @id @default(uuid())
+  og_ttile       String @db.Text
+  slug           String @unique
+  og_description String @db.Text
+  og_image       String
+  keywords       String @db.Text
+  schema_markup  Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
