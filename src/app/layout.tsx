@@ -1,10 +1,10 @@
+import Container from "@/components/layout/Container";
+import Footer from "@/components/layout/Footer";
+import Header from "@/components/layout/Header";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Container from "@/components/layout/Container";
-import ThemeProvider from "@/components/provider/ThemeProvider";
-import Footer from "@/components/layout/Footer";
+import RootProvider from "@/components/provider/RootProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,18 +34,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-200 dark:bg-[#18181B] text-gray-800 dark:text-gray-200 font-sans`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <RootProvider>
           <Container className="flex flex-col min-h-screen gap-10 ">
             <Header />
             {children}
             <Footer />
           </Container>
-        </ThemeProvider>
+        </RootProvider>
       </body>
     </html>
   );

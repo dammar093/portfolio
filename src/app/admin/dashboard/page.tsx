@@ -25,19 +25,9 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem("authToken");
-
-      if (!token) {
-        throw new Error("No authentication token");
-      }
-
       const [projectsRes, languagesRes] = await Promise.all([
-        fetch("/api/admin/projects", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch("/api/admin/languages", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        fetch("/api/admin/projects"),
+        fetch("/api/admin/languages"),
       ]);
 
       if (!projectsRes.ok || !languagesRes.ok) {
