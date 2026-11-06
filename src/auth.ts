@@ -1,66 +1,71 @@
-import type { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
+import authConfig from "@/auth.config";
 import { prisma } from "@/lib/prisma";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import NextAuth from "next-auth";
+import { UserRole } from "@/generated/prisma/client";
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
+  pages: {
+    signIn: "/login",
+    error: "/error",
+  },
 
-const authSecret = process.env.NEXTAUTH_SECRET ?? process.env.JWT_SECRET;
+  adapter: PrismaAdapter(prisma),
 
-export const authOptions = {
-  secret: authSecret,
-  session: { strategy: "jwt" },
-  pages: { signIn: "/login" },
-  providers: [
-    CredentialsProvider({
-      name: "Email and password",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-        role: { label: "Account type", type: "text" },
-      },
-      async authorize(credentials) {
-        const email = credentials?.email?.trim().toLowerCase();
-        const password = credentials?.password;
-        const role = credentials?.role;
+  session: {
+    strategy: "jwt",
+    maxAge: 60 * 60, // 🔥 1 hour in seconds
+    updateAge: 15 * 60, // refresh JWT every 15 minutes if active
+  },
 
-        if (
-          !email ||
-          !password ||
-          (role !== "ADMIN" && role !== "USER")
-        ) {
-          return null;
-        }
+  jwt: {
+    maxAge: 60 * 60, // 🔥 1 hour
+  },
 
-        const user = await prisma.user.findUnique({ where: { email } });
+  events: {
+    async linkAccount({ user }) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { emailVerified: new Date() },
+      });
+    },
+  },
 
-        if (!user || user.role !== role || !(await compare(password, user.password))) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.email,
-          role: user.role,
-        };
-      },
-    }),
-  ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.sub = user.id;
-        token.role = user.role;
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.sub as string;
+        session.user.role = token.role as UserRole;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.image = token.image as string;
       }
+      return session;
+    },
+
+    async jwt({ token, trigger, session }) {
+      if (trigger === "update" && session?.user) {
+        token.name = session.user.name;
+        token.image = session.user.image;
+        return token;
+      }
+
+      if (!token.sub) return token;
+
+      const user = await prisma.user.findUnique({
+        where: { id: token.sub },
+      });
+
+      if (!user) return token;
+
+      token.role = user.role;
+      token.name = user.name;
+      token.email = user.email;
+      token.avatar = user.avatar;
 
       return token;
     },
-    async session({ session, token }) {
-      if (session.user && token.sub && token.role) {
-        session.user.id = token.sub;
-        session.user.role = token.role;
-      }
-
-      return session;
-    },
   },
-} satisfies NextAuthOptions;
+
+  ...authConfig,
+});
