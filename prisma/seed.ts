@@ -7,10 +7,13 @@ async function seed() {
   try {
     // User
     console.log("👥 Creating user...");
-    await prisma.user.create({
-      data: {
+    const password = await bcryptjs.hash("@Dyams093", 10);
+    await prisma.user.upsert({
+      where: { email: "dammarrana093@gmail.com" },
+      update: { password },
+      create: {
         email: "dammarrana093@gmail.com",
-        password: await bcryptjs.hash("@Dammar093", 10),
+        password,
       },
     });
 

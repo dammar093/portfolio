@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -31,7 +31,6 @@ export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
@@ -49,12 +48,9 @@ export const LoginForm = () => {
   });
 
   return (
-    <div className="h-dvh flex items-center justify-center px-4 py-10 w-full ">
-      {/* Background decoration */}
-  
+    <div className="flex h-dvh w-full items-center justify-center px-4 py-10">
       <div className="relative w-full max-w-lg">
-        {/* Login card */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-9 h-full">
+        <div className="h-full rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-9">
           {/* Header */}
           <div className="mb-2 text-center">
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/25">
@@ -105,7 +101,7 @@ export const LoginForm = () => {
                         disabled={isLoading}
                         autoComplete="username"
                         aria-invalid={fieldState.invalid}
-                        className="h-12 pl-11 border-slate-200 focus-visible:ring-blue-500"
+                        className="h-12 border-slate-200 pl-11 text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 focus-visible:ring-blue-500"
                       />
                     </div>
 
@@ -141,7 +137,7 @@ export const LoginForm = () => {
                         disabled={isLoading}
                         autoComplete="current-password"
                         aria-invalid={fieldState.invalid}
-                        className="h-12 pl-11 pr-11 border-slate-200 focus-visible:ring-blue-500"
+                        className="h-12 border-slate-200 pl-11 pr-11 text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 focus-visible:ring-blue-500"
                       />
 
                       <button
@@ -167,23 +163,12 @@ export const LoginForm = () => {
                 )}
               />
 
-              {/* Forgot password */}
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => router.push("/forgot-password")}
-                  className="text-sm font-semibold text-blue-600 hover:text-blue-700"
-                >
-                  Forgot password?
-                </button>
-              </div>
-
               {/* Submit */}
               <Button
                 type="submit"
                 disabled={isLoading}
                 size="lg"
-                className="h-12 w-full bg-blue-600 font-semibold text-white hover:bg-blue-700"
+                className="mt-3 h-12 w-full bg-blue-600 font-semibold text-white hover:bg-blue-700"
               >
                 {isLoading ? (
                   <>
@@ -204,6 +189,7 @@ export const LoginForm = () => {
           <div className="mt-7 border-t border-slate-100 pt-5">
             <div className="flex items-center justify-center gap-2 text-center">
               <ShieldCheck size={17} className="shrink-0 text-green-600" />
+
               <p className="text-xs text-slate-500">
                 Restricted access. Authorized administrators only.
               </p>

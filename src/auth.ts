@@ -1,71 +1,38 @@
 import authConfig from "@/auth.config";
-import { prisma } from "@/lib/prisma";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import NextAuth from "next-auth";
-import { UserRole } from "@/generated/prisma/client";
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  trustHost: true,
+import type { NextAuthOptions } from "next-auth";
+
+export const authOptions = {
+  ...authConfig,
+  secret:
+    process.env.NEXTAUTH_SECRET ??
+    process.env.AUTH_SECRET ??
+    process.env.JWT_SECRET,
   pages: {
     signIn: "/login",
     error: "/error",
   },
-
-  adapter: PrismaAdapter(prisma),
-
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60, // 🔥 1 hour in seconds
-    updateAge: 15 * 60, // refresh JWT every 15 minutes if active
+    maxAge: 60 * 60,
+    updateAge: 15 * 60,
   },
-
   jwt: {
-    maxAge: 60 * 60, // 🔥 1 hour
+    maxAge: 60 * 60,
   },
-
-  events: {
-    async linkAccount({ user }) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { emailVerified: new Date() },
-      });
-    },
-  },
-
   callbacks: {
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.sub as string;
-        session.user.role = token.role as UserRole;
-        session.user.name = token.name as string;
-        session.user.email = token.email as string;
-        session.user.image = token.image as string;
+      if (session.user && token.sub && token.role) {
+        session.user.id = token.sub;
+        session.user.role = token.role;
       }
       return session;
     },
-
-    async jwt({ token, trigger, session }) {
-      if (trigger === "update" && session?.user) {
-        token.name = session.user.name;
-        token.image = session.user.image;
-        return token;
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+        token.role = user.role;
       }
-
-      if (!token.sub) return token;
-
-      const user = await prisma.user.findUnique({
-        where: { id: token.sub },
-      });
-
-      if (!user) return token;
-
-      token.role = user.role;
-      token.name = user.name;
-      token.email = user.email;
-      token.avatar = user.avatar;
-
       return token;
     },
   },
-
-  ...authConfig,
-});
+} satisfies NextAuthOptions;

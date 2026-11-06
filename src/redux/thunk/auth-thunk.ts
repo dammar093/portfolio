@@ -1,42 +1,84 @@
 import { ILoginUserPayload } from "@/types/auth-type";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { getCsrfToken } from "next-auth/react";
 
-//async thunk for login user
 export const loginUserThunk = createAsyncThunk<
-  void,              // ✅ success return type
-  ILoginUserPayload,          // ✅ payload type
-  { rejectValue: string }     // ✅ error type
+  void,
+  ILoginUserPayload,
+  { rejectValue: string }
 >(
   "auth/login",
   async (payload, { rejectWithValue }) => {
     try {
-      await axios.post("/api/v1/auth/login", payload)
-    } catch (error) {
-      if(axios.isAxiosError(error)){
-        return rejectWithValue(error?.response?.data.message || "Invalid credentials")
+      const csrfToken = await getCsrfToken();
+      if (!csrfToken) {
+        return rejectWithValue("Unable to start a secure login request.");
       }
-      return rejectWithValue("Network error");
+
+      const { data } = await axios.post<{ redirectTo?: string }>(
+        "/api/v1/auth/login",
+        {
+          ...payload,
+          csrfToken,
+          callbackUrl: "/admin/dashboard",
+          json: "true",
+        }
+      );
+
+      const redirectUrl = data.redirectTo
+        ? new URL(data.redirectTo, window.location.origin)
+        : null;
+      if (!redirectUrl || redirectUrl.origin !== window.location.origin) {
+        return rejectWithValue("The login request could not be completed.");
+      }
+
+      return;
+    } catch (error) {
+      if (axios.isAxiosError<{ message?: string }>(error)) {
+        return rejectWithValue(
+          error.response?.data.message ?? "Unable to sign in. Please try again."
+        );
+      }
+      return rejectWithValue("Unable to sign in. Please try again.");
     }
   }
-)
+);
 
-
-//async thunk for logout user
 export const logoutUserThunk = createAsyncThunk<
-  void,              // ✅ success return type
-  void,          // ✅ payload type
-  { rejectValue: string }     // ✅ error type
+  void,
+  void,
+  { rejectValue: string }
 >(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      await axios.get("/api/v1/auth/logout")
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return rejectWithValue(error?.response?.data.message || "Logot fail")
+      const csrfToken = await getCsrfToken();
+      if (!csrfToken) {
+        return rejectWithValue("Unable to start a secure logout request.");
       }
-      return rejectWithValue("Network error");
+
+      const { data } = await axios.post<{ url?: string }>(
+        "/api/v1/auth/logout",
+        {
+          csrfToken,
+          callbackUrl: "/login",
+          json: "true",
+        }
+      );
+
+      if (!data.url || new URL(data.url, window.location.origin).origin !== window.location.origin) {
+        return rejectWithValue("The logout request could not be completed.");
+      }
+
+      return;
+    } catch (error) {
+      if (axios.isAxiosError<{ message?: string }>(error)) {
+        return rejectWithValue(
+          error.response?.data.message ?? "Unable to sign out. Please try again."
+        );
+      }
+      return rejectWithValue("Unable to sign out. Please try again.");
     }
   }
-)
+);

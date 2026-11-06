@@ -3,11 +3,13 @@ import Link from "next/link";
 import React from "react";
 import { ModeToggle } from "../theme/Mode";
 import { usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import useAuth from "@/hooks/useAuth";
 
 const Header = () => {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { logoutUser, isLoading } = useAuth();
 
   return (
     <header className="w-full h-20 md:h-16 flex items-center justify-between px-4 md:px-8  backdrop-blur-md sticky top-0 z-50">
@@ -46,7 +48,8 @@ const Header = () => {
         {session ? (
           <button
             type="button"
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={logoutUser}
+            disabled={isLoading}
             className="dark:text-gray-200 text-gray-800"
           >
             Log out
