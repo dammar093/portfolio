@@ -99,7 +99,7 @@ model Page {
   slug        String  @unique
   image       String?
   description String  @db.Text
-
+  order       Int     @default(1)
   seo Seo?
 
   createdAt DateTime @default(now())
@@ -125,14 +125,14 @@ model Seo {
 
   seo_type SeoType
 
-  page_id String @unique
-  page    Page   @relation(fields: [page_id], references: [id], onDelete: Cascade)
+  page_id String? @unique
+  page    Page?   @relation(fields: [page_id], references: [id], onDelete: Cascade)
 
-  setting_id String  @unique
-  setting    Setting @relation(fields: [setting_id], references: [id], onDelete: Cascade)
+  setting_id String?  @unique
+  setting    Setting? @relation(fields: [setting_id], references: [id], onDelete: Cascade)
 
-  blog_id String @unique
-  blog    Blog   @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  blog_id String? @unique
+  blog    Blog?   @relation(fields: [blog_id], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

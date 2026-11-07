@@ -24,6 +24,7 @@ export const authOptions = {
       if (session.user && token.sub && token.role) {
         session.user.id = token.sub;
         session.user.role = token.role;
+        session.user.image = token.picture ?? null;
       }
       return session;
     },
@@ -31,6 +32,7 @@ export const authOptions = {
       if (user) {
         token.sub = user.id;
         token.role = user.role;
+        token.picture = user.image;
       }
       return token;
     },
