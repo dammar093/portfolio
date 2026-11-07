@@ -148,13 +148,13 @@ const PageForm = () => {
                   </FieldLabel>
                   <div className="space-y-2">
                     {imagePreview ? (
-                      <div className="relative inline-block">
+                      <div className="relative aspect-[3/2] w-72 overflow-hidden rounded-lg border">
                         <Image
-                          width={1080}
-                          height={720}
+                          fill
+                          sizes="288px"
                           src={imagePreview}
                           alt="Page image preview"
-                          className="max-w-xs rounded-lg border"
+                          className="object-cover"
                         />
                         <button
                           type="button"

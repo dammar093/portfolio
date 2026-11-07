@@ -2,6 +2,7 @@ import { error, success } from "@/lib/api-response";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/require-admin";
 import { uploadImage } from "@/lib/upload-image";
+import { withAbsoluteAssetUrls } from "@/lib/absolute-asset-urls";
 import { pageUpdateSchema } from "@/app/admin/pages/_schema/page-schema";
 import { NextRequest } from "next/server";
 
@@ -62,7 +63,7 @@ export async function PATCH(req: NextRequest, context: PageRouteContext) {
 
     return success({
       message: "Page updated successfully",
-      data: page,
+      data: withAbsoluteAssetUrls(page, req.url),
       status: 200,
     });
   } catch (err) {
@@ -102,7 +103,7 @@ export async function GET(
       {
         status: 200,
         message: "Page fetched successfully",
-        data: page,
+        data: withAbsoluteAssetUrls(page, req.url),
       },
 
     );

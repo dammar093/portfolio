@@ -3,6 +3,7 @@ import { error, success } from "@/lib/api-response";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/require-admin";
 import { uploadImage } from "@/lib/upload-image";
+import { withAbsoluteAssetUrls } from "@/lib/absolute-asset-urls";
 import { pageCreateSchema } from "@/app/admin/pages/_schema/page-schema";
 import type { Prisma } from "@/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
 
     return success({
       message: "Page created successfully",
-      data: page,
+      data: withAbsoluteAssetUrls(page, req.url),
       status: 201,
     });
   } catch (err) {
@@ -149,7 +150,7 @@ export async function GET(req: NextRequest) {
       {
         success: true,
         message: "Pages fetched successfully",
-        data,
+        data: withAbsoluteAssetUrls(data, req.url),
         usedSlugs: usedSlugs.map(({ slug }) => slug),
         meta: {
           page,

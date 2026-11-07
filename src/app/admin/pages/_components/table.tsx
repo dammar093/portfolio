@@ -54,7 +54,7 @@ const PageDataTable = memo(function PageDataTable({
             </TableCell>
             <TableCell>
               {page.image ? (
-                <div className="relative h-16 w-20 overflow-hidden rounded">
+                <div className="relative aspect-[3/2] w-24 overflow-hidden rounded">
                   <Image
                     src={page.image}
                     alt={page.title}

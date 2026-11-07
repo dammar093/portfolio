@@ -1,3 +1,5 @@
+import { SeoItem } from "@/types/seo-type";
+
 export type PageItem = {
   id: string;
   title: string;
@@ -5,6 +7,7 @@ export type PageItem = {
   slug: string;
   image: string | null;
   description: string;
+  seo: SeoItem | null;
   createdAt: string;
   updatedAt: string;
 };
