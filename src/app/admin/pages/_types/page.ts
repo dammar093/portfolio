@@ -5,7 +5,6 @@ export type PageItem = {
   slug: string;
   image: string | null;
   description: string;
-  order: number;
   createdAt: string;
   updatedAt: string;
 };
@@ -27,6 +26,7 @@ export type PageListResponse = {
   success: boolean;
   message: string;
   data: PageItem[];
+  usedSlugs: string[];
   meta: PaginationMeta;
 };
 

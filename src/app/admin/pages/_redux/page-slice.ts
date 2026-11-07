@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createPage, deletePage, fetchPage, fetchPages, toggleStatusPage, updatePage } from "../_redux/page-thunk";
+import { createPage, fetchPage, fetchPages, toggleStatusPage, updatePage } from "../_redux/page-thunk";
 import type { PageItem, PaginationMeta } from "../_types/page";
 
 interface PagesState {
   data: PageItem[];
+  usedSlugs: string[];
   currentPage: PageItem | null;
   meta: PaginationMeta | null;
   loading: boolean;
@@ -14,6 +15,7 @@ interface PagesState {
 
 const initialState: PagesState = {
   data: [],
+  usedSlugs: [],
   currentPage: null,
   meta: null,
   loading: false,
@@ -39,6 +41,7 @@ const pagesSlice = createSlice({
         state.loading = false;
         state.listLoading = false;
         state.data = action.payload.data;
+        state.usedSlugs = action.payload.usedSlugs;
         state.meta = action.payload.meta;
       })
       .addCase(fetchPages.rejected, (state, action) => {
@@ -57,6 +60,9 @@ const pagesSlice = createSlice({
         state.error = null;
         // ✅ Add new page at top
         state.data.unshift(action.payload);
+        if (!state.usedSlugs.includes(action.payload.slug)) {
+          state.usedSlugs.push(action.payload.slug);
+        }
         // ✅ Update pagination meta safely
         if (state.meta) {
           state.meta.total += 1;
@@ -97,20 +103,6 @@ const pagesSlice = createSlice({
         }
       })
       .addCase(updatePage.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? "Something went wrong";
-      })
-      //  builder for delete page by id
-      .addCase(deletePage.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(deletePage.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = null;
-        state.data = state.data?.filter(d => d.id !== action.payload.id)
-      })
-      .addCase(deletePage.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Something went wrong";
       })

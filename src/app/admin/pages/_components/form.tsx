@@ -1,7 +1,6 @@
 "use client";
 
 import { BaseTextEditor } from "@/components/admin/shared/text-editor";
-import { Loader } from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -12,10 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { File, Upload, X } from "lucide-react";
+import { File, LoaderCircle, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { Controller } from "react-hook-form";
-import { pageSlug } from "../_schema/page-schema";
 import { usePageForm } from "../_hooks/usePageForm";
 import { PageFormSkeleton } from "./page-form-skaleton";
 
@@ -27,6 +25,8 @@ const PageForm = () => {
     isEdit,
     isLoadingPage,
     isSubmitting,
+    availableSlugs,
+    areSlugsLoading,
     handleImageChange,
     removeImage,
   } = usePageForm();
@@ -99,7 +99,7 @@ const PageForm = () => {
                   <Select
                     value={field.value || ""}
                     onValueChange={field.onChange}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || areSlugsLoading}
                   >
                     <SelectTrigger
                       id="slug"
@@ -107,16 +107,27 @@ const PageForm = () => {
                       ref={field.ref}
                       onBlur={field.onBlur}
                     >
-                      <SelectValue placeholder="Choose a page slug" />
+                      <SelectValue
+                        placeholder={
+                          areSlugsLoading
+                            ? "Loading available slugs..."
+                            : "Choose a page slug"
+                        }
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      {pageSlug.map((slug) => (
+                      {availableSlugs.map((slug) => (
                         <SelectItem value={slug} key={slug}>
                           {slug}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                  {!areSlugsLoading && availableSlugs.length === 0 && (
+                    <p className="text-sm text-muted-foreground">
+                      All page slugs are already in use.
+                    </p>
+                  )}
                   {fieldState.error && (
                     <p className="mt-1 text-sm text-red-500">
                       {fieldState.error.message}
@@ -207,54 +218,27 @@ const PageForm = () => {
             )}
           />
 
-          <div className="w-full max-w-sm">
-            <Controller
-              name="order"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="order">
-                    Order<span className="text-red-400">*</span>
-                  </FieldLabel>
-                  <Input
-                    {...field}
-                    id="order"
-                    type="number"
-                    min={1}
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Enter display order"
-                    disabled={isSubmitting}
-                    onChange={(event) =>
-                      field.onChange(Number(event.target.value))
-                    }
-                  />
-                  {fieldState.error && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {fieldState.error.message}
-                    </p>
-                  )}
-                </Field>
-              )}
-            />
-
-           
-          </div>
-
-          {isSubmitting ? (
-            <div
-              className="flex items-center gap-2 text-sm text-muted-foreground"
-              role="status"
-              aria-live="polite"
-            >
-              <Loader size={32} color="currentColor" />
-              <span>Saving page...</span>
-            </div>
-          ) : (
-            <Button type="submit" variant="default" size="lg" className="w-fit">
-              <span>Save</span>
-              <File />
-            </Button>
-          )}
+          <Button
+            type="submit"
+            variant="default"
+            size="lg"
+            className="w-fit min-w-24"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <LoaderCircle className="size-4 animate-spin" />
+                <span role="status" aria-live="polite">
+                  Saving...
+                </span>
+              </>
+            ) : (
+              <>
+                <span>Save</span>
+                <File />
+              </>
+            )}
+          </Button>
         </FieldGroup>
       </form>
     </div>

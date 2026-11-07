@@ -17,7 +17,6 @@ export function TableSkeleton() {
           <TableHead>Image</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Slug</TableHead>
-          <TableHead>Order</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -37,11 +36,7 @@ export function TableSkeleton() {
               <Skeleton className="h-4 w-24" />
             </TableCell>
             <TableCell>
-              <Skeleton className="h-4 w-12" />
-            </TableCell>
-            <TableCell>
               <div className="flex items-center gap-1">
-                <Skeleton className="h-8 w-8 rounded" />
                 <Skeleton className="h-8 w-8 rounded" />
                 <Skeleton className="h-8 w-8 rounded" />
               </div>

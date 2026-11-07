@@ -31,7 +31,6 @@ export async function PATCH(req: NextRequest, context: PageRouteContext) {
 
     const parsed = pageUpdateSchema.safeParse({
       ...payload,
-      order: payload.order === undefined ? undefined : Number(payload.order),
     });
 
     if (!parsed.success) {
@@ -45,7 +44,6 @@ export async function PATCH(req: NextRequest, context: PageRouteContext) {
       title: parsed.data.title,
       short_title: parsed.data.short_title,
       description: parsed.data.description,
-      order: parsed.data.order,
     };
     let imagePath = existingPage.image;
     const image = formData.get("image");

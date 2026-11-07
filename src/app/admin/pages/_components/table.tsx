@@ -1,16 +1,5 @@
 "use client";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -27,11 +16,12 @@ import {
 } from "@/components/ui/tooltip";
 import Paginations from "@/components/admin/shared/Paginations";
 import { SearchCreate } from "@/components/admin/shared/Search-carate";
-import { Edit, FileSearch, Trash } from "lucide-react";
+import { Edit, FileSearch } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { memo } from "react";
 import { usePages } from "../_hooks/usePageList";
+import { pages as availablePageSlugs } from "../_schema/page-schema";
 import type { PageItem, PaginationMeta } from "../_types/page";
 import { Error } from "./error";
 import { TableSkeleton } from "./loading";
@@ -39,13 +29,11 @@ import { TableSkeleton } from "./loading";
 interface PageDataTableProps {
   pages: PageItem[];
   meta: PaginationMeta;
-  onDelete: (id: string) => void;
 }
 
 const PageDataTable = memo(function PageDataTable({
   pages,
   meta,
-  onDelete,
 }: PageDataTableProps) {
   return (
     <Table className="w-full border">
@@ -55,7 +43,6 @@ const PageDataTable = memo(function PageDataTable({
           <TableHead>Image</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Slug</TableHead>
-          <TableHead>Order</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -84,11 +71,6 @@ const PageDataTable = memo(function PageDataTable({
               {page.title}
             </TableCell>
             <TableCell>{page.slug}</TableCell>
-            <TableCell>
-              <span className="text-sm text-muted-foreground">
-                {page.order}
-              </span>
-            </TableCell>
             <TableCell className="w-32">
               <div className="flex items-center gap-1">
                 <Tooltip>
@@ -123,43 +105,6 @@ const PageDataTable = memo(function PageDataTable({
                   <TooltipContent>Page SEO</TooltipContent>
                 </Tooltip>
 
-                <AlertDialog>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-red-500"
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>Delete Page</TooltipContent>
-                  </Tooltip>
-
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Delete page &quot;{page.title}&quot;?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. The page and its
-                        associated data will be permanently removed.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        className="bg-red-600 hover:bg-red-700"
-                        onClick={() => onDelete(page.id)}
-                      >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
               </div>
             </TableCell>
           </TableRow>
@@ -174,7 +119,6 @@ interface PageTableResultsProps {
   meta: PaginationMeta | null;
   loading: boolean;
   error: string | null;
-  onDelete: (id: string) => void;
 }
 
 const PageTableResults = memo(function PageTableResults({
@@ -182,7 +126,6 @@ const PageTableResults = memo(function PageTableResults({
   meta,
   loading,
   error,
-  onDelete,
 }: PageTableResultsProps) {
   if (error) return <Error error={error} />;
   if (loading) return <TableSkeleton />;
@@ -197,7 +140,7 @@ const PageTableResults = memo(function PageTableResults({
 
   return (
     <>
-      <PageDataTable pages={pages} meta={meta} onDelete={onDelete} />
+      <PageDataTable pages={pages} meta={meta} />
       <Paginations
         page={meta.page}
         limit={meta.limit}
@@ -211,12 +154,12 @@ const PageTableResults = memo(function PageTableResults({
 export function PagesTable() {
   const {
     pages,
+    usedSlugs,
     listLoading,
     listError,
     meta,
     searchInput,
     setSearch,
-    handleDelete,
   } = usePages();
 
   return (
@@ -226,13 +169,17 @@ export function PagesTable() {
         onSearch={setSearch}
         title="Create Page"
         link="/pages/create-page"
+        hideCreate={
+          listLoading ||
+          Boolean(listError) ||
+          availablePageSlugs.every((slug) => usedSlugs.includes(slug))
+        }
       />
       <PageTableResults
         pages={pages}
         meta={meta}
         loading={listLoading}
         error={listError}
-        onDelete={handleDelete}
       />
     </div>
   );

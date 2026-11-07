@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
     // console.log("Payload:: ", payload)
     const parsed = pageCreateSchema.safeParse({
       ...payload,
-      order: Number(payload.order),
       isMenu: payload.isMenu === "true",
       isFooter: payload.isFooter === "true",
       status: payload.status === "true",
@@ -53,7 +52,6 @@ export async function POST(req: NextRequest) {
         short_title: parsed.data.short_title,
         description: parsed.data.description,
         slug: parsed.data.slug,
-        order: parsed.data.order,
         image: path,
       },
     });
@@ -127,20 +125,24 @@ export async function GET(req: NextRequest) {
 
     if (search) {
       where.OR = [
-        { title: { contains: search } },
-        { short_title: { contains: search } },
+        { title: { contains: search, mode: "insensitive" } },
+        { short_title: { contains: search, mode: "insensitive" } },
+        { slug: { contains: search, mode: "insensitive" } },
       ];
     }
 
     // 📊 Queries (data + total must use SAME filter)
-    const [data, total] = await Promise.all([
+    const [data, total, usedSlugs] = await Promise.all([
       prisma.page.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { order: "asc" },
+        orderBy: { createdAt: "desc" },
       }),
       prisma.page.count({ where }),
+      prisma.page.findMany({
+        select: { slug: true },
+      }),
     ]);
 
     return NextResponse.json(
@@ -148,6 +150,7 @@ export async function GET(req: NextRequest) {
         success: true,
         message: "Pages fetched successfully",
         data,
+        usedSlugs: usedSlugs.map(({ slug }) => slug),
         meta: {
           page,
           limit,

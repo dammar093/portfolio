@@ -5,6 +5,7 @@ import { useAppSelector } from "@/hooks/useAppSelectore";
 import {
   PageCreateFormData,
   PageFormData,
+  pages,
   pageFormSchema,
 } from "../_schema/page-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +23,7 @@ export const usePageForm = () => {
   const { id } = useParams<{ id?: string }>();
   const isEdit = Boolean(id);
 
-  const { currentPage } = usePages(id);
+  const { currentPage, usedSlugs, listLoading } = usePages(id);
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,7 +35,6 @@ export const usePageForm = () => {
       short_title: "",
       description: "",
       slug: "",
-      order: 1,
       image: undefined,
     },
   });
@@ -47,13 +47,10 @@ export const usePageForm = () => {
       title: currentPage.title ?? "",
       short_title: currentPage.short_title ?? "",
       description: currentPage.description ?? "",
-      order: currentPage.order ?? 1,
       image: undefined,
     });
 
-    if (currentPage.image) {
-      setImagePreview((prev) => prev ?? currentPage.image);
-    }
+    setImagePreview(currentPage.image);
   }, [currentPage, form]);
 
   /* Submit */
@@ -62,11 +59,11 @@ export const usePageForm = () => {
       setIsSubmitting(true);
       try {
         if (isEdit && id) {
-          const { title, short_title, description, order, image } = data;
+          const { title, short_title, description, image } = data;
           await dispatch(
             updatePage({
               id,
-              data: { title, short_title, description, order, image },
+              data: { title, short_title, description, image },
             })
           ).unwrap();
         } else {
@@ -87,7 +84,8 @@ export const usePageForm = () => {
         }
 
         form.reset();
-        router.push("/admin/pages");
+        router.replace("/admin/pages");
+        router.refresh();
       } finally {
         setIsSubmitting(false);
       }
@@ -129,6 +127,8 @@ export const usePageForm = () => {
     isLoadingPage: isEdit && loading && currentPage?.id !== id,
     isSubmitting,
     imagePreview,
+    availableSlugs: pages.filter((slug) => !usedSlugs.includes(slug)),
+    areSlugsLoading: !isEdit && listLoading,
     isEdit,
     onSubmit,
     handleImageChange,

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { deletePage, fetchPage, fetchPages, toggleStatusPage } from "../_redux/page-thunk";
+import { fetchPage, fetchPages, toggleStatusPage } from "../_redux/page-thunk";
 import { AppDispatch } from "@/redux/store";
 import { useAppSelector } from "@/hooks/useAppSelectore";
 
@@ -38,7 +38,7 @@ export function usePages(id?: string) {
 
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { data, meta, loading, listLoading, currentPage, error, listError } = useAppSelector(
+  const { data, usedSlugs, meta, loading, listLoading, currentPage, error, listError } = useAppSelector(
     (state) => state.pages
   );
 
@@ -92,16 +92,13 @@ export function usePages(id?: string) {
   }, [router, pathname, searchParams]);
 
   // delete page
-  const handleDelete = useCallback((id: string) => {
-    dispatch(deletePage(id))
-  }, [dispatch])
-  // delete page
   const handleToggleStatus = useCallback((id: string) => {
     dispatch(toggleStatusPage(id))
   }, [dispatch])
 
   return {
     pages: data,
+    usedSlugs,
     meta,
     loading,
     error,
@@ -119,7 +116,6 @@ export function usePages(id?: string) {
     setLimit,
     setSearch: updateSearch,
     currentPage,
-    handleDelete,
     handleToggleStatus
   };
 }

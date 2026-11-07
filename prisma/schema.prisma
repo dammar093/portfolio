@@ -99,7 +99,6 @@ model Page {
   slug        String  @unique
   image       String?
   description String  @db.Text
-  order       Int     @default(1)
   seo Seo?
 
   createdAt DateTime @default(now())

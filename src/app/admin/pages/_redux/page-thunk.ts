@@ -68,10 +68,11 @@ export const createPage = createAsyncThunk<
     return res.data.data;
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      return rejectWithValue(
-        err.response?.data?.message || "Failed to create page"
-      );
+      const message = err.response?.data?.message || "Failed to create page";
+      toast.error(message);
+      return rejectWithValue(message);
     }
+    toast.error("Network error");
     return rejectWithValue("Network error");
   }
 });
@@ -127,37 +128,15 @@ export const updatePage = createAsyncThunk<
     return res.data.data;
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      toast.error(err.response?.data?.message || "Failed to delete page");
-      return rejectWithValue(
-        err.response?.data?.message || "Failed to update page"
-      );
+      const message = err.response?.data?.message || "Failed to update page";
+      toast.error(message);
+      return rejectWithValue(message);
     }
+    toast.error("Network error");
     return rejectWithValue("Network error");
   }
 });
 
-
-export const deletePage = createAsyncThunk<
-  PageItem,
-  string,
-  { rejectValue: string }
->("pages/deletePage", async (id, { rejectWithValue }) => {
-  try {
-
-    const res = await axios.delete<PageResponse>(`/api/v1/pages/${id}`);
-    toast.success(res.data.message);
-    // ✅ ALWAYS PageItem
-    return res.data.data;
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      toast.error(err.response?.data?.message || "Failed to delete page");
-      return rejectWithValue(
-        err.response?.data?.message || "Failed to delete page"
-      );
-    }
-    return rejectWithValue("Network error");
-  }
-});
 
 export const toggleStatusPage = createAsyncThunk<
   PageItem,
