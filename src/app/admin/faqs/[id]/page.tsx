@@ -3,7 +3,7 @@ import { Suspense } from "react";
 
 const Edit = dynamic(() => import("./_components").then((mod) => mod.Edit));
 
-const EditLanguagePage = () => {
+const EditFaqsePage = () => {
   return (
     <Suspense fallback={null}>
       <Edit />
@@ -11,4 +11,4 @@ const EditLanguagePage = () => {
   );
 };
 
-export default EditLanguagePage;
+export default EditFaqsePage;

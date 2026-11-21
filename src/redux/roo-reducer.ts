@@ -9,6 +9,7 @@ import testimonialReducer from "@/app/admin/testimonials/_redux/testimonial-slic
 import faqReducer from "@/app/admin/faqs/_redux/faq-slice";
 import blogReducer from "@/app/admin/blogs/_redux/blog-slice";
 import projectReducer from "@/app/admin/projects/_redux/project-slice";
+import contactReducer from "@/app/admin/contacts/_redux/contact-slice";
 
 
 
@@ -27,6 +28,7 @@ export const rootReducer = combineReducers({
   faqs: faqReducer,
   blogs: blogReducer,
   projects: projectReducer,
+  contacts: contactReducer,
   seo: seoReducer,
 });
 

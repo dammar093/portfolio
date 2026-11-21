@@ -220,3 +220,17 @@ model FAQ {
   @@index([isActive, order])
   @@map("faqs")
 }
+
+
+model Contact{
+  id        String   @id @default(uuid())
+  fullname      String
+  email         String
+  forWhat        String
+  message       String @db.Text
+  isSeen  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isSeen, id])
+}
