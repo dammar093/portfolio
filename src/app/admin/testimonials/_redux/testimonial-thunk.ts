@@ -12,7 +12,6 @@ import type {
   TestimonialResponse,
 } from "../_types/testimonial";
 
-const API_URL = "/api/v1/testimonials";
 
 // ==============================
 // CREATE FORM DATA
@@ -59,8 +58,8 @@ export const fetchTestimonials = createAsyncThunk<
   async (params = {}, { rejectWithValue }) => {
     try {
       const response = await axios.get<TestimonialListResponse>(
-        API_URL,
-        { params }
+        "/api/v1/admin/testimonials",
+        { params },
       );
 
       return response.data;
@@ -84,7 +83,7 @@ export const fetchTestimonial = createAsyncThunk<
   async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get<TestimonialResponse>(
-        `${API_URL}/${id}`
+        `/api/v1/admin/testimonials/${id}`,
       );
 
       return response.data.data;
@@ -112,8 +111,8 @@ export const createTestimonial = createAsyncThunk<
   async (data, { rejectWithValue }) => {
     try {
       const response = await axios.post<TestimonialResponse>(
-        API_URL,
-        createFormData(data)
+        "/api/v1/admin/testimonials",
+        createFormData(data),
       );
 
       toast.success(
@@ -145,8 +144,8 @@ export const updateTestimonial = createAsyncThunk<
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await axios.patch<TestimonialResponse>(
-        `${API_URL}/${id}`,
-        createFormData(data)
+        `/api/v1/admin/testimonials/${id}`,
+        createFormData(data),
       );
 
       toast.success(
@@ -177,7 +176,7 @@ export const deleteTestimonial = createAsyncThunk<
   "testimonials/deleteTestimonial",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`${API_URL}/${id}`);
+      const response = await axios.delete(`/api/v1/admin/testimonials/${id}`);
 
       toast.success(
         response.data.message || "Testimonial deleted successfully"
