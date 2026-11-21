@@ -4,18 +4,26 @@ import { SeoType } from "@/generated/prisma/enums";
 import { NextRequest } from "next/server";
 import { withAbsoluteAssetUrls } from "@/lib/absolute-asset-urls";
 
-export async function GET(req: NextRequest, context: { params: Promise<{ slug: string; seoType: string }> }) {
+type SeoRouteContext = {
+  params: Promise<{
+    slug: string;
+    seoType: string;
+  }>;
+};
+
+export async function GET(req: NextRequest, context: SeoRouteContext) {
   try {
     const { slug, seoType } = await context.params;
 
-    // Validate enum
+    // Validate SEO type
     if (!Object.values(SeoType).includes(seoType as SeoType)) {
       return error({
         status: 400,
-        message: "Invalid seoType",
+        message: "Invalid SEO type",
       });
     }
 
+    // Find SEO by slug and type
     const seo = await prisma.seo.findFirst({
       where: {
         slug,
@@ -32,14 +40,15 @@ export async function GET(req: NextRequest, context: { params: Promise<{ slug: s
 
     return success({
       status: 200,
+      message: "SEO fetched successfully",
       data: withAbsoluteAssetUrls(seo, req.url),
     });
-
   } catch (err) {
-    console.error(err);
+    console.error("GET SEO Error:", err);
+
     return error({
       status: 500,
-      message: "Something went wrong",
+      message: "Something went wrong while fetching SEO",
     });
   }
 }
