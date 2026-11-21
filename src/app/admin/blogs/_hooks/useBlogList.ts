@@ -17,10 +17,7 @@ import {
   usePathname,
 } from "next/navigation";
 
-import {
-  fetchBlog,
-  fetchBlogs,
-} from "../_redux/blog-thunk";
+import { deleteBlog, fetchBlog, fetchBlogs } from "../_redux/blog-thunk";
 
 import type { AppDispatch } from "@/redux/store";
 import { useAppSelector } from "@/hooks/useAppSelectore";
@@ -80,6 +77,52 @@ export function useBlogs(id?: string) {
     }
   }, [dispatch, page, limit, search, id]);
 
+  // Delete blog
+  const handleDeleteBlog = useCallback(
+    async (blogId: string) => {
+      await dispatch(deleteBlog(blogId)).unwrap();
+
+      if (id) return;
+
+      // If this is the last item on the current page,
+      // move to the previous page.
+      if (data.length === 1 && page > 1) {
+        const previousPage = page - 1;
+
+        setPage(previousPage);
+
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("page", String(previousPage));
+
+        router.replace(`${pathname}?${params.toString()}`, {
+          scroll: false,
+        });
+
+        return;
+      }
+
+      // Refresh current page after deletion
+      await dispatch(
+        fetchBlogs({
+          page,
+          limit,
+          ...(search.trim() ? { search: search.trim() } : {}),
+        }),
+      ).unwrap();
+    },
+    [
+      dispatch,
+      id,
+      data.length,
+      page,
+      limit,
+      search,
+      searchParams,
+      router,
+      pathname,
+    ],
+  );
+
   // Cleanup debounce timer
   useEffect(() => {
     return () => {
@@ -121,29 +164,35 @@ export function useBlogs(id?: string) {
   );
 
   // Pagination handlers
-  const handlePageChange = useCallback((value: number) => {
-    setPage(value);
+  const handlePageChange = useCallback(
+    (value: number) => {
+      setPage(value);
 
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(value));
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", String(value));
 
-    router.replace(`${pathname}?${params.toString()}`, {
-      scroll: false,
-    });
-  }, [router, pathname, searchParams]);
+      router.replace(`${pathname}?${params.toString()}`, {
+        scroll: false,
+      });
+    },
+    [router, pathname, searchParams],
+  );
 
-  const handleLimitChange = useCallback((value: number) => {
-    setLimit(value);
-    setPage(1);
+  const handleLimitChange = useCallback(
+    (value: number) => {
+      setLimit(value);
+      setPage(1);
 
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("limit", String(value));
-    params.set("page", "1");
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("limit", String(value));
+      params.set("page", "1");
 
-    router.replace(`${pathname}?${params.toString()}`, {
-      scroll: false,
-    });
-  }, [router, pathname, searchParams]);
+      router.replace(`${pathname}?${params.toString()}`, {
+        scroll: false,
+      });
+    },
+    [router, pathname, searchParams],
+  );
 
   return {
     blogs: data,
@@ -165,6 +214,8 @@ export function useBlogs(id?: string) {
     setPage: handlePageChange,
     setLimit: handleLimitChange,
     setSearch: updateSearch,
+
+    handleDeleteBlog,
 
     currentBlog,
   };

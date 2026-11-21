@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import {
   createBlog,
+  deleteBlog,
   fetchBlog,
   fetchBlogs,
   updateBlog,
@@ -22,6 +23,7 @@ interface BlogsState {
   error: string | null;
   listLoading: boolean;
   listError: string | null;
+  deleting: boolean;
 }
 
 const initialState: BlogsState = {
@@ -33,11 +35,13 @@ const initialState: BlogsState = {
   error: null,
   listLoading: true,
   listError: null,
+  deleting: false,
 };
 
 const blogsSlice = createSlice({
   name: "blogs",
   initialState,
+
   reducers: {
     clearCurrentBlog: (state) => {
       state.currentBlog = null;
@@ -160,7 +164,46 @@ const blogsSlice = createSlice({
         state.loading = false;
         state.error = action.payload ?? "Something went wrong";
       });
-  },
+
+    // ==============================
+    // DELETE BLOG
+    // ==============================
+    builder
+      .addCase(deleteBlog.pending, (state) => {
+        state.deleting = true;
+        state.error = null;
+      })
+      .addCase(deleteBlog.fulfilled, (state, action) => {
+        state.deleting = false;
+
+        const deletedBlog = state.data.find(
+          (blog) => blog.id === action.payload,
+        );
+
+        state.data = state.data.filter((blog) => blog.id !== action.payload);
+
+        if (deletedBlog) {
+          state.usedSlugs = state.usedSlugs.filter(
+            (slug) => slug !== deletedBlog.slug,
+          );
+        }
+
+        if (state.currentBlog?.id === action.payload) {
+          state.currentBlog = null;
+        }
+
+        if (state.meta) {
+          state.meta.total = Math.max(0, state.meta.total - 1);
+          state.meta.totalPages = Math.ceil(
+            state.meta.total / state.meta.limit,
+          );
+        }
+      })
+      .addCase(deleteBlog.rejected, (state, action) => {
+        state.deleting = false;
+        state.error = action.payload ?? "Failed to delete blog";
+      });
+  }
 });
 
 export const { clearCurrentBlog } = blogsSlice.actions;

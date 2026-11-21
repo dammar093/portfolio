@@ -15,14 +15,12 @@ import type {
   BlogUpdateInput,
 } from "../_schema/blog-schema";
 
-const API_URL = "/api/v1/blogs";
+const API_URL = "/api/v1/admin/blogs";
 
 // ==============================
 // FORM DATA HELPER
 // ==============================
-const createFormData = (
-  data: Record<string, unknown>,
-) => {
+const createFormData = (data: object) => {
   const formData = new FormData();
 
   Object.entries(data).forEach(([key, value]) => {
@@ -49,7 +47,7 @@ const getErrorMessage = (
     return err.response?.data?.message || fallback;
   }
 
-  return "Network error";
+  return fallback;
 };
 
 // ==============================
@@ -176,6 +174,38 @@ export const updateBlog = createAsyncThunk<
       const message = getErrorMessage(
         err,
         "Failed to update blog",
+      );
+
+      toast.error(message);
+
+      return rejectWithValue(message);
+    }
+  },
+);
+
+// ==============================
+// DELETE BLOG
+// ==============================
+export const deleteBlog = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>(
+  "blogs/deleteBlog",
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await axios.delete<{
+        success: boolean;
+        message: string;
+      }>(`${API_URL}/${id}`);
+
+      toast.success(res.data.message || "Blog deleted successfully");
+
+      return id;
+    } catch (err) {
+      const message = getErrorMessage(
+        err,
+        "Failed to delete blog",
       );
 
       toast.error(message);
