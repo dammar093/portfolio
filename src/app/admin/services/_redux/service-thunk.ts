@@ -12,7 +12,6 @@ import type {
   ServiceResponse,
 } from "../_types/service";
 
-const API_URL = "/api/v1/services";
 
 // ==============================
 // CREATE FORM DATA
@@ -63,8 +62,8 @@ export const fetchServices = createAsyncThunk<
   async (params = {}, { rejectWithValue }) => {
     try {
       const response = await axios.get<ServiceListResponse>(
-        API_URL,
-        { params }
+        "/api/v1/admin/services",
+        { params },
       );
 
       return response.data;
@@ -88,7 +87,7 @@ export const fetchService = createAsyncThunk<
   async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get<ServiceResponse>(
-        `${API_URL}/${id}`
+        `/api/v1/admin/services/${id}`,
       );
 
       return response.data.data;
@@ -116,8 +115,8 @@ export const createService = createAsyncThunk<
   async (data, { rejectWithValue }) => {
     try {
       const response = await axios.post<ServiceResponse>(
-        API_URL,
-        createFormData(data)
+        "/api/v1/admin/services",
+        createFormData(data),
       );
 
       toast.success(
@@ -149,8 +148,8 @@ export const updateService = createAsyncThunk<
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await axios.patch<ServiceResponse>(
-        `${API_URL}/${id}`,
-        createFormData(data)
+        `/api/v1/admin/services/${id}`,
+        createFormData(data),
       );
 
       toast.success(
@@ -181,9 +180,7 @@ export const deleteService = createAsyncThunk<
   "services/deleteService",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(
-        `${API_URL}/${id}`
-      );
+      const response = await axios.delete(`/api/v1/admin/services/${id}`);
 
       toast.success(
         response.data.message || "Service deleted successfully"
