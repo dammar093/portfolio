@@ -15,8 +15,6 @@ import type {
   BlogUpdateInput,
 } from "../_schema/blog-schema";
 
-const API_URL = "/api/v1/admin/blogs";
-
 // ==============================
 // FORM DATA HELPER
 // ==============================
@@ -76,7 +74,7 @@ export const fetchBlogs = createAsyncThunk<
       }
 
       const res = await axios.get<BlogListResponse>(
-        `${API_URL}?${query.toString()}`,
+        `/api/v1/admin/blogs?${query.toString()}`,
       );
 
       return res.data;
@@ -102,7 +100,7 @@ export const createBlog = createAsyncThunk<
       const formData = createFormData(data);
 
       const res = await axios.post<BlogResponse>(
-        API_URL,
+        "/api/v1/admin/blogs",
         formData,
       );
 
@@ -133,9 +131,7 @@ export const fetchBlog = createAsyncThunk<
   "blogs/fetchBlog",
   async (id, { rejectWithValue }) => {
     try {
-      const res = await axios.get<BlogResponse>(
-        `${API_URL}/${id}`,
-      );
+      const res = await axios.get<BlogResponse>(`/api/v1/admin/blogs/${id}`);
 
       return res.data.data;
     } catch (err) {
@@ -163,7 +159,7 @@ export const updateBlog = createAsyncThunk<
       const formData = createFormData(data);
 
       const res = await axios.patch<BlogResponse>(
-        `${API_URL}/${id}`,
+        `/api/v1/admin/blogs/${id}`,
         formData,
       );
 
@@ -197,7 +193,7 @@ export const deleteBlog = createAsyncThunk<
       const res = await axios.delete<{
         success: boolean;
         message: string;
-      }>(`${API_URL}/${id}`);
+      }>(`/api/v1/admin/blogs/${id}`);
 
       toast.success(res.data.message || "Blog deleted successfully");
 
