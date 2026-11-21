@@ -20,7 +20,7 @@ export const fetchPages = createAsyncThunk<
     if (params?.search) query.append("search", params.search);
 
     const res = await axios.get<PageListResponse>(
-      `/api/v1/pages?${query.toString()}`
+      `/api/v1/admin/pages?${query.toString()}`
     );
 
     return res.data;
@@ -55,7 +55,7 @@ export const createPage = createAsyncThunk<
     });
 
     const res = await axios.post<PageResponse>(
-      "/api/v1/pages",
+      "/api/v1/admin/pages",
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -84,7 +84,7 @@ export const fetchPage = createAsyncThunk<
 >("pages/fetchPage", async (id, { rejectWithValue }) => {
   try {
 
-    const res = await axios.get<PageResponse>(`/api/v1/pages/${id}`);
+    const res = await axios.get<PageResponse>(`/api/v1/admin/pages/${id}`);
     // ✅ ALWAYS PageItem
     return res.data.data;
   } catch (err) {
@@ -115,7 +115,7 @@ export const updatePage = createAsyncThunk<
     });
 
     const res = await axios.patch<PageResponse>(
-      `/api/v1/pages/${id}`,
+      `/api/v1/admin/pages/${id}`,
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -145,7 +145,7 @@ export const toggleStatusPage = createAsyncThunk<
 >("pages/togglePage", async (id, { rejectWithValue }) => {
   try {
 
-    const res = await axios.patch<PageResponse>(`/api/v1/pages/${id}/toggle`);
+    const res = await axios.patch<PageResponse>(`/api/v1/admin/pages/${id}/toggle`);
     toast.success(res.data.message);
     // ✅ ALWAYS PageItem
     return res.data.data;
