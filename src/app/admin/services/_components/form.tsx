@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import { Controller } from "react-hook-form";
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, X, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,6 @@ import { Field, FieldLabel } from "@/components/ui/field";
 
 import { useServiceForm } from "../_hooks/useServiceForm";
 import { ServiceFormSkeleton } from "./form-skeleton";
-import { BaseTextEditor } from "@/components/admin/shared/text-editor";
 
 export default function ServiceForm() {
   const {
@@ -33,6 +32,8 @@ export default function ServiceForm() {
     formState: { errors, isSubmitting },
   } = form;
 
+  const isBusy = loading || isSubmitting;
+
   if (isLoadingPage) {
     return <ServiceFormSkeleton />;
   }
@@ -49,6 +50,7 @@ export default function ServiceForm() {
           <Input
             id="title"
             placeholder="Enter service title"
+            disabled={isBusy}
             {...register("title")}
           />
 
@@ -75,6 +77,7 @@ export default function ServiceForm() {
                 name={field.name}
                 ref={field.ref}
                 onBlur={field.onBlur}
+                disabled={isBusy}
                 value={field.value == null ? "" : String(field.value)}
                 onChange={(event) => {
                   const value = event.target.value;
@@ -100,7 +103,14 @@ export default function ServiceForm() {
               Description<span className="text-red-400">*</span>
             </FieldLabel>
 
-            <BaseTextEditor {...field} />
+            <Textarea
+              {...field}
+              id="description"
+              placeholder="Enter service description..."
+              rows={5}
+              disabled={isBusy}
+              aria-invalid={fieldState.invalid}
+            />
 
             {fieldState.error && (
               <p className="mt-1 text-sm text-red-500">
@@ -125,7 +135,7 @@ export default function ServiceForm() {
               checked={Boolean(field.value)}
               onBlur={field.onBlur}
               onChange={(event) => field.onChange(event.target.checked)}
-              disabled={isSubmitting || loading}
+              disabled={isBusy}
               className="h-4 w-4 rounded border-gray-300"
             />
           )}
@@ -157,6 +167,7 @@ export default function ServiceForm() {
               size="icon"
               className="absolute right-2 top-2 h-7 w-7"
               onClick={removeImage}
+              disabled={isBusy}
               aria-label="Remove service image"
             >
               <X className="h-4 w-4" />
@@ -169,9 +180,7 @@ export default function ServiceForm() {
           >
             <ImagePlus className="h-8 w-8 text-muted-foreground" />
 
-            <span className="text-sm text-muted-foreground">
-              Upload image
-            </span>
+            <span className="text-sm text-muted-foreground">Upload image</span>
 
             <span className="text-xs text-muted-foreground">
               PNG, JPG, WEBP (Max 5 MB)
@@ -184,6 +193,7 @@ export default function ServiceForm() {
           type="file"
           accept="image/png,image/jpeg,image/webp"
           className="hidden"
+          disabled={isBusy}
           onChange={(event) => {
             handleImageChange(event.target.files?.[0]);
             event.target.value = "";
@@ -192,12 +202,17 @@ export default function ServiceForm() {
       </div>
 
       {/* Submit */}
-      <Button type="submit" disabled={loading || isSubmitting}>
-        {loading || isSubmitting
-          ? "Please wait..."
-          : isEdit
-            ? "Update Service"
-            : "Create Service"}
+      <Button type="submit" disabled={isBusy} className="min-w-36">
+        {isBusy ? (
+          <>
+            <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+            {isEdit ? "Updating..." : "Creating..."}
+          </>
+        ) : isEdit ? (
+          "Update Service"
+        ) : (
+          "Create Service"
+        )}
       </Button>
     </form>
   );
