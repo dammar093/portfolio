@@ -7,12 +7,12 @@ async function seed() {
   try {
     // User
     console.log("👥 Creating user...");
-    const password = await bcryptjs.hash("@Dyams093", 10);
+    const password = await bcryptjs.hash("process.env.ADMIN_PASSWORD", 10);
     await prisma.user.upsert({
-      where: { email: "dammarrana093@gmail.com" },
+      where: { email: process.env.ADMIN_EMAIL! },
       update: { password },
       create: {
-        email: "dammarrana093@gmail.com",
+        email: process.env.ADMIN_EMAIL!,
         password,
       },
     });
