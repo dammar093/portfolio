@@ -7,6 +7,8 @@ import serviceReducer from "@/app/admin/services/_redux/service-slice";
 import experienceReducer from "@/app/admin/experiences/_redux/experience-slice";
 import testimonialReducer from "@/app/admin/testimonials/_redux/testimonial-slice";
 import faqReducer from "@/app/admin/faqs/_redux/faq-slice";
+import blogReducer from "@/app/admin/blogs/_redux/blog-slice";
+
 
 
 import seoReducer from "@/redux/slices/seo-slice";
@@ -21,6 +23,7 @@ export const rootReducer = combineReducers({
   experiences: experienceReducer,
   testimonials: testimonialReducer,
   faqs: faqReducer,
+  blogs: blogReducer,
   seo: seoReducer,
 });
 
