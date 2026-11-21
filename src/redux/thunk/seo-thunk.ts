@@ -54,7 +54,7 @@ export const updateSeo = createAsyncThunk<
     }
 
     const response = await axios.patch<SeoResponse>(
-      `/api/v1/seo/${relatedId}/${seoType}`,
+      `/api/v1/admin/seo/${relatedId}/${seoType}`,
       formData,
     );
 
@@ -79,7 +79,7 @@ export const fetchSeo = createAsyncThunk<
 >("seo/get", async ({ relatedId, seoType }, { rejectWithValue }) => {
   try {
     const response = await axios.get<SeoResponse>(
-      `/api/v1/seo/${relatedId}/${seoType}`,
+      `/api/v1/admin/seo/${relatedId}/${seoType}`,
     );
 
     return response.data.data;

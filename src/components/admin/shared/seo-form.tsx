@@ -13,7 +13,6 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { SeoFormSkeleton } from "./seo-form-skaleton";
-import { BaseTextEditor } from "./text-editor";
 
 interface SeoFormProps {
   id: string;
@@ -169,7 +168,15 @@ const SeoForm = ({ id, seoType }: SeoFormProps) => {
                   </span>
                 </div>
 
-                <BaseTextEditor {...field} />
+                <Textarea
+                  {...field}
+                  id="og_description"
+                  placeholder="Enter SEO description..."
+                  rows={5}
+                  maxLength={160}
+                  aria-invalid={fieldState.invalid}
+                  className="resize-none"
+                />
 
                 {fieldState.error && (
                   <p className="text-sm text-red-500">
@@ -241,7 +248,10 @@ const SeoForm = ({ id, seoType }: SeoFormProps) => {
           <Controller
             name="og_image"
             control={form.control}
-            render={({ field: { onChange, onBlur, name, ref }, fieldState }) => (
+            render={({
+              field: { onChange, onBlur, name, ref },
+              fieldState,
+            }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="og_image">Social Sharing Image</FieldLabel>
 

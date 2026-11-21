@@ -16,6 +16,7 @@ const relatedRecordFilter: Record<
   [SeoType.PAGE]: (relatedId) => ({ page_id: relatedId }),
   [SeoType.SETTING]: (relatedId) => ({ setting_id: relatedId }),
   [SeoType.BLOG]: (relatedId) => ({ blog_id: relatedId }),
+  [SeoType.PROJECT]: (relatedId) => ({ project_id: relatedId }),
 };
 
 async function findOrCreateSeo(relatedId: string, seoType: SeoType) {
@@ -23,6 +24,7 @@ async function findOrCreateSeo(relatedId: string, seoType: SeoType) {
     seo_type: seoType,
     ...relatedRecordFilter[seoType](relatedId),
   };
+
   const existing = await prisma.seo.findFirst({ where });
 
   if (existing) return existing;
@@ -31,12 +33,18 @@ async function findOrCreateSeo(relatedId: string, seoType: SeoType) {
     case SeoType.PAGE: {
       const page = await prisma.page.findUnique({
         where: { id: relatedId },
-        select: { id: true, title: true, slug: true, image: true, description: true },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          image: true,
+          description: true,
+        },
       });
 
       if (!page) return null;
 
-      const seo = await prisma.seo.upsert({
+      return prisma.seo.upsert({
         where: { page_id: relatedId },
         create: {
           og_ttile: page.title,
@@ -48,41 +56,52 @@ async function findOrCreateSeo(relatedId: string, seoType: SeoType) {
         },
         update: {},
       });
-
-      return seo.seo_type === seoType ? seo : null;
     }
+
     case SeoType.SETTING: {
       const setting = await prisma.setting.findUnique({
         where: { id: relatedId },
-        select: { id: true, name: true, logo: true, description: true },
+        select: {
+          id: true,
+          name: true,
+          logo: true,
+          description: true,
+        },
       });
 
       if (!setting) return null;
 
-      const seo = await prisma.seo.upsert({
+      return prisma.seo.upsert({
         where: { setting_id: relatedId },
         create: {
           og_ttile: setting.name,
           slug: `setting-${setting.id}`,
           og_image: setting.logo,
-          og_description: Array.from(setting.description).slice(0, 160).join(""),
+          og_description: Array.from(setting.description)
+            .slice(0, 160)
+            .join(""),
           seo_type: SeoType.SETTING,
           setting_id: setting.id,
         },
         update: {},
       });
-
-      return seo.seo_type === seoType ? seo : null;
     }
+
     case SeoType.BLOG: {
       const blog = await prisma.blog.findUnique({
         where: { id: relatedId },
-        select: { id: true, title: true, slug: true, image: true, description: true },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          image: true,
+          description: true,
+        },
       });
 
       if (!blog) return null;
 
-      const seo = await prisma.seo.upsert({
+      return prisma.seo.upsert({
         where: { blog_id: relatedId },
         create: {
           og_ttile: blog.title,
@@ -94,13 +113,47 @@ async function findOrCreateSeo(relatedId: string, seoType: SeoType) {
         },
         update: {},
       });
-
-      return seo.seo_type === seoType ? seo : null;
     }
+
+    case SeoType.PROJECT: {
+      const project = await prisma.project.findUnique({
+        where: { id: relatedId },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          image: true,
+          description: true,
+        },
+      });
+
+      if (!project) return null;
+
+      return prisma.seo.upsert({
+        where: { project_id: relatedId },
+        create: {
+          og_ttile: project.title,
+          slug: project.slug,
+          og_image: project.image,
+          og_description: Array.from(project.description)
+            .slice(0, 160)
+            .join(""),
+          seo_type: SeoType.PROJECT,
+          project_id: project.id,
+        },
+        update: {},
+      });
+    }
+
+    default:
+      return null;
   }
 }
 
-export async function PATCH(req: NextRequest, context: { params: Promise<{ relatedId: string; seoType: string }> }) {
+export async function PATCH(
+  req: NextRequest,
+  context: { params: Promise<{ relatedId: string; seoType: string }> },
+) {
   const authCheck = await requireAdmin();
   if (!authCheck.ok) return authCheck.response;
 
@@ -170,7 +223,10 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ relat
   }
 }
 
-export async function GET(req: NextRequest, context: { params: Promise<{ relatedId: string; seoType: string }> }) {
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ relatedId: string; seoType: string }> },
+) {
   const authCheck = await requireAdmin();
   if (!authCheck.ok) return authCheck.response;
 
