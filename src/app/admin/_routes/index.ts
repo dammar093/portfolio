@@ -1,6 +1,15 @@
 import { Newspaper } from "lucide-react";
 import { FaGlobe, FaQuestion } from "react-icons/fa";
-import { MdBuild, MdContactMail, MdDashboard, MdExtension, MdInventory, MdPages, MdSettings } from "react-icons/md";
+import {
+  MdBuild,
+  MdContactMail,
+  MdDashboard,
+  MdExtension,
+  MdInventory,
+  MdPages,
+  MdSettings,
+  MdWork,
+} from "react-icons/md";
 export const adminRoutes = [
   {
     title: "View Site",
@@ -31,6 +40,11 @@ export const adminRoutes = [
     title: "Services",
     path: "/admin/services?page=1&limit=10",
     icon: MdBuild,
+  },
+  {
+    title: "Experience",
+    path: "/admin/experiences?page=1&limit=10",
+    icon: MdWork,
   },
   {
     title: "Blogs",
