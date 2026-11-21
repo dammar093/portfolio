@@ -1,43 +1,31 @@
-/* ========================= */
-/* Quote Stats */
-/* ========================= */
-
-export interface QuoteStats {
-  total: number;
-  pending: number;
-  contacted: number;
-  processing: number;
-  cancelled: number;
-}
-
-/* ========================= */
-/* Generic Active/Inactive Stats */
-/* ========================= */
-
-export interface EntityStatusStats {
+export interface DashboardStatusCount {
   total: number;
   active: number;
   inactive: number;
 }
 
-/* ========================= */
-/* Dashboard Data */
-/* ========================= */
-
-export interface DashboardStatsData {
-  quotes: QuoteStats;
-  products: EntityStatusStats;
-  services: EntityStatusStats;
-  blogs: EntityStatusStats;
-  packages: EntityStatusStats;
+export interface DashboardContactCount {
+  total: number;
+  unseen: number;
+  seen: number;
 }
 
-/* ========================= */
-/* Full API Response */
-/* ========================= */
+export interface DashboardStats {
+  users: number;
+  projects: DashboardStatusCount;
+  languages: DashboardStatusCount;
+  services: DashboardStatusCount;
+  testimonials: DashboardStatusCount;
+  blogs: DashboardStatusCount;
+  experiences: DashboardStatusCount;
+  faqs: DashboardStatusCount;
+  pages: number;
+  contacts: DashboardContactCount;
+  settings: number;
+}
 
-export interface DashboardStatsResponse {
+export interface DashboardResponse {
   success: boolean;
   message: string;
-  data: DashboardStatsData;
+  data: DashboardStats;
 }

@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { DashboardStatsData } from "../_types/dashboard";
+
+import type { DashboardStats } from "../_types/dashboard";
 import { fetchDashboardStats } from "./dashboard-thunk";
 
 interface DashboardState {
-  data: DashboardStatsData | null;
+  data: DashboardStats | null;
   loading: boolean;
   error: string | null;
 }
@@ -17,8 +18,12 @@ const initialState: DashboardState = {
 const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
-  reducers: {},
-
+  reducers: {
+    clearDashboard: (state) => {
+      state.data = null;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchDashboardStats.pending, (state) => {
@@ -31,9 +36,11 @@ const dashboardSlice = createSlice({
       })
       .addCase(fetchDashboardStats.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Something went wrong";
+        state.error = action.payload || "Failed to fetch dashboard statistics";
       });
   },
 });
+
+export const { clearDashboard } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

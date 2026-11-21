@@ -1,29 +1,27 @@
 "use client";
 
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useCallback, useEffect } from "react";
+
+import { useAppDispatch } from "@/hooks/useAppDispatch";
+import { useAppSelector } from "@/hooks/useAppSelectore";
+
 import { fetchDashboardStats } from "../_redux/dashboard-thunk";
-import { AppDispatch, RootState } from "@/redux-store/store";
 
 export const useDashboard = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state.dashboard
-  );
+  const { data, loading, error } = useAppSelector((state) => state.dashboard);
+
+  const refetch = useCallback(() => {
+    dispatch(fetchDashboardStats());
+  }, [dispatch]);
 
   useEffect(() => {
-    if (!data) {
-      dispatch(fetchDashboardStats());
-    }
-  }, [dispatch, data]);
-
-  const refetch = () => {
-    dispatch(fetchDashboardStats());
-  };
+    refetch();
+  }, [refetch]);
 
   return {
-    dashboard: data,
+    stats: data,
     loading,
     error,
     refetch,

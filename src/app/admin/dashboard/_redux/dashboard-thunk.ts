@@ -1,22 +1,23 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { DashboardStatsResponse } from "../_types/dashboard";
+import axios from "axios";
+import type { DashboardStats } from "../_types/dashboard";
 
 export const fetchDashboardStats = createAsyncThunk<
-  DashboardStatsResponse["data"],
+  DashboardStats,
   void,
   { rejectValue: string }
->("dashboard/fetchStats", async (_, { rejectWithValue }) => {
+>("dashboard/fetchDashboardStats", async (_, { rejectWithValue }) => {
   try {
-    const res = await fetch("/api/v1/dashboard");
+    const response = await axios.get("/api/v1/admin/dashboard");
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch dashboard stats");
+    return response.data.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch dashboard statistics",
+      );
     }
 
-    const data: DashboardStatsResponse = await res.json();
-
-    return data.data;
-  } catch (error: any) {
-    return rejectWithValue(error.message);
+    return rejectWithValue("Failed to fetch dashboard statistics");
   }
 });

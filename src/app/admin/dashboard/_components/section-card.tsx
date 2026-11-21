@@ -2,16 +2,41 @@
 
 import React from "react";
 
-interface Props {
+interface SectionCardProps {
   title: string;
   children: React.ReactNode;
+  description?: string;
+  className?: string;
 }
 
-export default function SectionCard({ title, children }: Props) {
+export default function SectionCard({
+  title,
+  children,
+  description,
+  className = "",
+}: SectionCardProps) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border p-6 space-y-6">
-      <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
-      {children}
-    </div>
+    <section
+      className={`
+        relative overflow-hidden rounded-2xl
+        border border-border/70 bg-card
+        p-5 shadow-sm sm:p-6
+        ${className}
+      `}
+    >
+      {/* Section Header */}
+      <div className="mb-6 flex flex-col gap-1">
+        <h2 className="text-lg font-semibold tracking-tight text-foreground">
+          {title}
+        </h2>
+
+        {description && (
+          <p className="text-sm text-muted-foreground">{description}</p>
+        )}
+      </div>
+
+      {/* Section Content */}
+      <div className="min-w-0">{children}</div>
+    </section>
   );
 }
