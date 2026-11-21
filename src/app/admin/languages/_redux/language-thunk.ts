@@ -31,7 +31,7 @@ export const fetchLanguages = createAsyncThunk<
     if (params?.search) query.append("search", params.search);
 
     const res = await axios.get<LanguageListResponse>(
-      `/api/v1/languages?${query.toString()}`
+      `/api/v1/admin/languages?${query.toString()}`,
     );
 
     return res.data;
@@ -66,8 +66,8 @@ export const createLanguage = createAsyncThunk<
     });
 
     const res = await axios.post<LanguageResponse>(
-      "/api/v1/languages",
-      formData
+      "/api/v1/admin/languages",
+      formData,
     );
 
     toast.success(res.data.message);
@@ -97,7 +97,7 @@ export const fetchLanguage = createAsyncThunk<
 >("languages/fetchLanguage", async (id, { rejectWithValue }) => {
   try {
     const res = await axios.get<LanguageResponse>(
-      `/api/v1/languages/${id}`
+      `/api/v1/admin/languages/${id}`,
     );
 
     return res.data.data;
@@ -132,8 +132,8 @@ export const updateLanguage = createAsyncThunk<
     });
 
     const res = await axios.patch<LanguageResponse>(
-      `/api/v1/languages/${id}`,
-      formData
+      `/api/v1/admin/languages/${id}`,
+      formData,
     );
 
     toast.success(res.data.message);
@@ -165,7 +165,7 @@ export const deleteLanguage = createAsyncThunk<
     const res = await axios.delete<{
       success: boolean;
       message: string;
-    }>(`/api/v1/languages/${id}`);
+    }>(`/api/v1/admin/languages/${id}`);
 
     toast.success(res.data.message);
 
