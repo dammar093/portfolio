@@ -29,12 +29,15 @@ model User {
 model Project {
   id          String  @id @default(uuid())
   title       String
+  slug        String  @db.Text
   description String  @db.Text
   image       String?
   link        String
   order       Int     @default(1)
   isActive    Boolean   @default(true)
   languages ProjectLanguage[]
+
+   seo   Seo?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -111,6 +114,7 @@ enum SeoType {
   PAGE
   SETTING
   BLOG
+  Project
 }
 
 model Seo {
@@ -132,7 +136,10 @@ model Seo {
 
   blog_id String? @unique
   blog    Blog?   @relation(fields: [blog_id], references: [id], onDelete: Cascade)
-
+  
+  proejct_id  String? @unique
+  project Project? @relation(fields: [proejct_id], references: [id], onDelete: Cascade)
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
