@@ -8,6 +8,8 @@ import experienceReducer from "@/app/admin/experiences/_redux/experience-slice";
 import testimonialReducer from "@/app/admin/testimonials/_redux/testimonial-slice";
 import faqReducer from "@/app/admin/faqs/_redux/faq-slice";
 import blogReducer from "@/app/admin/blogs/_redux/blog-slice";
+import projectReducer from "@/app/admin/projects/_redux/project-slice";
+
 
 
 
@@ -24,6 +26,7 @@ export const rootReducer = combineReducers({
   testimonials: testimonialReducer,
   faqs: faqReducer,
   blogs: blogReducer,
+  projects: projectReducer,
   seo: seoReducer,
 });
 
