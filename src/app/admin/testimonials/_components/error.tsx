@@ -5,7 +5,7 @@ export const Error = ({ error }: { error: string }) => {
     <div className="relative w-full overflow-x-auto rounded-md border p-8">
       <div className="flex flex-col items-center justify-center gap-4">
         <AlertCircle className="h-12 w-12 text-destructive" />
-        <h3 className="text-lg font-semibold">Error Loading Services</h3>
+        <h3 className="text-lg font-semibold">Error Loading Testimonials</h3>
         <p className="text-sm text-muted-foreground">{error}</p>
         <button
           onClick={() => window.location.reload()}
