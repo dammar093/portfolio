@@ -12,7 +12,6 @@ import type {
   FAQResponse,
 } from "../_types/faq";
 
-const API_URL = "/api/v1/faqs";
 
 // ==============================
 // CREATE FORM DATA
@@ -56,10 +55,9 @@ export const fetchFAQs = createAsyncThunk<
   "faqs/fetchFAQs",
   async (params = {}, { rejectWithValue }) => {
     try {
-      const response = await axios.get<FAQListResponse>(
-        API_URL,
-        { params }
-      );
+      const response = await axios.get<FAQListResponse>("/api/v1/admin/faqs", {
+        params,
+      });
 
       return response.data;
     } catch (err: unknown) {
@@ -81,9 +79,7 @@ export const fetchFAQ = createAsyncThunk<
   "faqs/fetchFAQ",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.get<FAQResponse>(
-        `${API_URL}/${id}`
-      );
+      const response = await axios.get<FAQResponse>(`/api/v1/admin/faqs/${id}`);
 
       return response.data.data;
     } catch (err: unknown) {
@@ -110,8 +106,8 @@ export const createFAQ = createAsyncThunk<
   async (data, { rejectWithValue }) => {
     try {
       const response = await axios.post<FAQResponse>(
-        API_URL,
-        createFormData(data)
+        "/api/v1/admin/faqs",
+        createFormData(data),
       );
 
       toast.success(
@@ -143,8 +139,8 @@ export const updateFAQ = createAsyncThunk<
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await axios.patch<FAQResponse>(
-        `${API_URL}/${id}`,
-        createFormData(data)
+        `/api/v1/admin/faqs/${id}`,
+        createFormData(data),
       );
 
       toast.success(
@@ -175,7 +171,7 @@ export const deleteFAQ = createAsyncThunk<
   "faqs/deleteFAQ",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`${API_URL}/${id}`);
+      const response = await axios.delete(`/api/v1/admin/faqs/${id}`);
 
       toast.success(
         response.data.message || "FAQ deleted successfully"
