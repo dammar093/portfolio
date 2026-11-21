@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -8,11 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Field, FieldLabel } from "@/components/ui/field";
 
 import { useServiceForm } from "../_hooks/useServiceForm";
 import { ServiceFormSkeleton } from "./form-skeleton";
 import { BaseTextEditor } from "@/components/admin/shared/text-editor";
-import { Field, FieldLabel } from "@/components/ui/field";
 
 export default function ServiceForm() {
   const {
@@ -77,7 +78,6 @@ export default function ServiceForm() {
                 value={field.value == null ? "" : String(field.value)}
                 onChange={(event) => {
                   const value = event.target.value;
-
                   field.onChange(value === "" ? undefined : Number(value));
                 }}
               />
@@ -91,16 +91,17 @@ export default function ServiceForm() {
       </div>
 
       {/* Description */}
-
       <Controller
         name="description"
-        control={form.control}
+        control={control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel htmlFor="description">
               Description<span className="text-red-400">*</span>
             </FieldLabel>
+
             <BaseTextEditor {...field} />
+
             {fieldState.error && (
               <p className="mt-1 text-sm text-red-500">
                 {fieldState.error.message}
@@ -109,6 +110,31 @@ export default function ServiceForm() {
           </Field>
         )}
       />
+
+      {/* Active Service */}
+      <div className="flex items-center gap-3 pt-2">
+        <Controller
+          name="isActive"
+          control={control}
+          render={({ field }) => (
+            <input
+              id="isActive"
+              type="checkbox"
+              name={field.name}
+              ref={field.ref}
+              checked={Boolean(field.value)}
+              onBlur={field.onBlur}
+              onChange={(event) => field.onChange(event.target.checked)}
+              disabled={isSubmitting || loading}
+              className="h-4 w-4 rounded border-gray-300"
+            />
+          )}
+        />
+
+        <Label htmlFor="isActive" className="cursor-pointer">
+          Active Service
+        </Label>
+      </div>
 
       {/* Image */}
       <div className="space-y-3">
@@ -143,7 +169,9 @@ export default function ServiceForm() {
           >
             <ImagePlus className="h-8 w-8 text-muted-foreground" />
 
-            <span className="text-sm text-muted-foreground">Upload image</span>
+            <span className="text-sm text-muted-foreground">
+              Upload image
+            </span>
 
             <span className="text-xs text-muted-foreground">
               PNG, JPG, WEBP (Max 5 MB)

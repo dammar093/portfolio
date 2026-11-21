@@ -58,16 +58,13 @@ export const useLanguageForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // React Hook Form
-  const form = useForm<
-    LanguageFormInput,
-    unknown,
-    LanguageFormOutput
-  >({
+  const form = useForm<LanguageFormInput, unknown, LanguageFormOutput>({
     resolver: zodResolver(languageFormSchema),
     defaultValues: {
       name: "",
       order: 1,
       image: null,
+      isActive: false,
     },
   });
 
@@ -109,7 +106,8 @@ export const useLanguageForm = () => {
               name: data.name,
               order: data.order,
               image: data.image,
-            })
+              isActive: data.isActive,
+            }),
           ).unwrap();
         }
 

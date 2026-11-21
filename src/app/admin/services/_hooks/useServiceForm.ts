@@ -56,7 +56,7 @@ export function useServiceForm() {
   // Fetch service when editing
   useServices(id);
 
-  const [preview, setPreview] = useState<string | null | undefined >(null);
+  const [preview, setPreview] = useState<string | null | undefined>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ==============================
@@ -73,6 +73,7 @@ export function useServiceForm() {
       description: "",
       order: 1,
       image: null,
+      isActive: true,
     },
   });
 
@@ -86,6 +87,7 @@ export function useServiceForm() {
         description: currentService?.description,
         order: currentService?.order,
         image: null,
+        isActive: currentService?.isActive ?? true,
       });
 
       setPreview(currentService?.image);
@@ -157,6 +159,7 @@ export function useServiceForm() {
         description: values.description,
         order: values.order,
         image: values.image ?? null,
+        isActive: values.isActive,
       };
 
       if (isEdit && id) {

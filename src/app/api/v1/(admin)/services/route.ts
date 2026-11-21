@@ -1,10 +1,13 @@
 
 import { NextRequest, NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/require-admin";
 import { uploadImage } from "@/lib/upload-image";
 import { withAbsoluteAssetUrls } from "@/lib/absolute-asset-urls";
+
 import { serviceCreateSchema } from "@/app/admin/services/_schema/service-schema";
+
 import type { Prisma } from "@/generated/prisma/client";
 
 // ==============================
@@ -118,6 +121,7 @@ export async function POST(request: NextRequest) {
     const title = formData.get("title");
     const description = formData.get("description");
     const order = formData.get("order");
+    const isActive = formData.get("isActive");
     const imageFile = formData.get("image");
 
     // Validate service fields
@@ -129,6 +133,7 @@ export async function POST(request: NextRequest) {
         typeof order === "string" && order.trim() !== ""
           ? order
           : 1,
+      isActive: isActive ?? "true",
     });
 
     if (!parsed.success) {
@@ -183,7 +188,6 @@ export async function POST(request: NextRequest) {
 
       const uploaded = await uploadImage(imageFile, "services");
 
-      // Save only the image path
       imagePath = uploaded.path;
     }
 

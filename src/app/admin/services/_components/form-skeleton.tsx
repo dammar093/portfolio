@@ -27,6 +27,12 @@ export function ServiceFormSkeleton() {
         <Skeleton className="h-32 w-full rounded-md" />
       </div>
 
+      {/* Active Service */}
+      <div className="flex items-center gap-3 pt-2">
+        <Skeleton className="h-4 w-4 rounded-sm" />
+        <Skeleton className="h-4 w-32" />
+      </div>
+
       {/* Image Upload */}
       <div className="space-y-3">
         <Skeleton className="h-4 w-24" />
@@ -40,9 +46,7 @@ export function ServiceFormSkeleton() {
       {/* Submit Button */}
       <Skeleton className="h-10 w-36 rounded-md" />
 
-      <span className="sr-only">
-        Loading service form...
-      </span>
+      <span className="sr-only">Loading service form...</span>
     </div>
   );
 }

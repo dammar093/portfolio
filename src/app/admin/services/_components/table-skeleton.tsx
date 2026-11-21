@@ -20,6 +20,7 @@ export function TableSkeleton() {
           <TableHead>Title</TableHead>
           <TableHead>Order</TableHead>
           <TableHead>Description</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -45,6 +46,10 @@ export function TableSkeleton() {
 
             <TableCell>
               <Skeleton className="h-4 w-40" />
+            </TableCell>
+
+            <TableCell>
+              <Skeleton className="h-5 w-16 rounded-full" />
             </TableCell>
 
             <TableCell>

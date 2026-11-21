@@ -88,6 +88,7 @@ export async function PATCH(
     const title = formData.get("title");
     const description = formData.get("description");
     const order = formData.get("order");
+    const isActive = formData.get("isActive");
     const imageFile = formData.get("image");
 
     // Validate fields
@@ -95,12 +96,17 @@ export async function PATCH(
       ...(title !== null && {
         title: typeof title === "string" ? title : "",
       }),
+
       ...(description !== null && {
-        description:
-          typeof description === "string" ? description : "",
+        description: typeof description === "string" ? description : "",
       }),
+
       ...(order !== null && {
         order: typeof order === "string" ? order : "",
+      }),
+
+      ...(isActive !== null && {
+        isActive: typeof isActive === "string" ? isActive : "",
       }),
     });
 
@@ -151,7 +157,6 @@ export async function PATCH(
         "services"
       );
 
-      // Save image path, not the complete upload object
       imagePath = uploaded.path;
     }
 

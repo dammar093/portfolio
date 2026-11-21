@@ -4,6 +4,7 @@ export interface ServiceItem {
   title: string;
   description: string;
   image: string | null;
+  isActive: boolean;
   order: number;
   createdAt: string;
   updatedAt: string;
@@ -52,6 +53,7 @@ export interface ServiceFormValues {
   description: string;
   order: number;
   image: File | null;
+  isActive: boolean;
 }
 
 // ==============================
@@ -62,6 +64,7 @@ export interface ServiceCreateInput {
   description: string;
   order: number;
   image?: File | null;
+  isActive: boolean;
 }
 
 // ==============================
@@ -72,6 +75,7 @@ export interface ServiceUpdateInput {
   description?: string;
   order?: number;
   image?: File | null;
+  isActive?: boolean;
 }
 
 // ==============================

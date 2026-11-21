@@ -74,6 +74,7 @@ const ServiceDataTable = memo(function ServiceDataTable({
           <TableHead>Title</TableHead>
           <TableHead>Order</TableHead>
           <TableHead>Description</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead className="w-32">Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -115,6 +116,20 @@ const ServiceDataTable = memo(function ServiceDataTable({
               </p>
             </TableCell>
 
+            {/* Status */}
+            <TableCell>
+              {service.isActive ? (
+                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                  Active
+                </span>
+              ) : (
+                <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                  Inactive
+                </span>
+              )}
+            </TableCell>
+
+            {/* Actions */}
             <TableCell>
               <div className="flex items-center gap-1">
                 {/* Edit */}

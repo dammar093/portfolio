@@ -10,6 +10,18 @@ const imageSchema = z
   .optional();
 
 // ==============================
+// BOOLEAN VALIDATION (FORM DATA)
+// ==============================
+const formBoolean = z.preprocess(
+  (value) => {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    return value;
+  },
+  z.boolean(),
+);
+
+// ==============================
 // CREATE SERVICE SCHEMA
 // ==============================
 export const serviceCreateSchema = z.object({
@@ -19,16 +31,15 @@ export const serviceCreateSchema = z.object({
     .min(1, "Service title is required")
     .max(150, "Title must not exceed 150 characters"),
 
-  description: z
-    .string()
-    .trim()
-    .min(1, "Service description is required"),
+  description: z.string().trim().min(1, "Service description is required"),
 
   order: z.coerce
     .number()
     .int("Order must be an integer")
     .min(1, "Order must be at least 1")
     .default(1),
+
+  isActive: formBoolean.default(true),
 
   image: imageSchema,
 });
@@ -55,6 +66,8 @@ export const serviceUpdateSchema = z.object({
     .int("Order must be an integer")
     .min(1, "Order must be at least 1")
     .optional(),
+
+  isActive: formBoolean.optional(),
 
   image: imageSchema,
 });
