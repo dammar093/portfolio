@@ -1,5 +1,5 @@
 import { Newspaper } from "lucide-react";
-import { FaGlobe, FaQuestion } from "react-icons/fa";
+import { FaGlobe, FaQuestion, FaQuoteLeft } from "react-icons/fa";
 import {
   MdBuild,
   MdContactMail,
@@ -56,7 +56,11 @@ export const adminRoutes = [
     path: "/admin/faqs?page=1&limit=10",
     icon: FaQuestion,
   },
-
+  {
+    title: "Testimonials",
+    path: "/admin/testimonials?page=1&limit=10",
+    icon: FaQuoteLeft,
+  },
   {
     title: "Contacts",
     path: "/admin/contacts?page=1&limit=10",

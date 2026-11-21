@@ -1,228 +1,101 @@
 
-import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
-import { prisma } from "@/lib/prisma";
-import { error, success } from "@/lib/api-response";
-import { requireAdmin } from "@/lib/require-admin";
-import { uploadImage } from "@/lib/upload-image";
-import { withAbsoluteAssetUrls } from "@/lib/absolute-asset-urls";
-
-import { serviceUpdateSchema } from "@/app/admin/services/_schema/service-schema";
-
-type RouteContext = {
-  params: Promise<{
-    id: string;
-  }>;
-};
+// Convert FormData boolean strings into actual booleans
+const formBoolean = z.preprocess(
+  (value) => {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    return value;
+  },
+  z.boolean(),
+);
 
 // ==============================
-// GET SINGLE SERVICE
+// CREATE TESTIMONIAL SCHEMA
 // ==============================
-export async function GET(
-  req: NextRequest,
-  { params }: RouteContext
-) {
-  const authCheck = await requireAdmin();
+export const testimonialCreateSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(100, "Name must not exceed 100 characters"),
 
-  if (!authCheck.ok) {
-    return authCheck.response;
-  }
+  position: z
+    .string()
+    .trim()
+    .min(1, "Position is required")
+    .max(150, "Position must not exceed 150 characters"),
 
-  try {
-    const { id } = await params;
+  company: z
+    .string()
+    .trim()
+    .min(1, "Company is required")
+    .max(150, "Company must not exceed 150 characters"),
 
-    const service = await prisma.services.findUnique({
-      where: { id },
-    });
+  testimonial: z
+    .string()
+    .trim()
+    .min(1, "Testimonial is required")
+    .max(3000, "Testimonial must not exceed 3000 characters"),
 
-    if (!service) {
-      return error({
-        status: 404,
-        message: "Service not found",
-      });
-    }
+  order: z.coerce
+    .number()
+    .int("Order must be an integer")
+    .min(1, "Order must be at least 1")
+    .default(1),
 
-    return success({
-      message: "Service fetched successfully",
-      data: withAbsoluteAssetUrls(service, req.url),
-    });
-  } catch (err) {
-    console.error("GET SERVICE:", err);
-
-    return error({
-      status: 500,
-      message: "Failed to fetch service",
-    });
-  }
-}
+  isActive: formBoolean.default(true),
+});
 
 // ==============================
-// UPDATE SERVICE
+// UPDATE TESTIMONIAL SCHEMA
 // ==============================
-export async function PATCH(
-  req: NextRequest,
-  { params }: RouteContext
-) {
-  const authCheck = await requireAdmin();
+export const testimonialUpdateSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(100, "Name must not exceed 100 characters")
+    .optional(),
 
-  if (!authCheck.ok) {
-    return authCheck.response;
-  }
+  position: z
+    .string()
+    .trim()
+    .min(1, "Position is required")
+    .max(150, "Position must not exceed 150 characters")
+    .optional(),
 
-  try {
-    const { id } = await params;
+  company: z
+    .string()
+    .trim()
+    .min(1, "Company is required")
+    .max(150, "Company must not exceed 150 characters")
+    .optional(),
 
-    const existingService = await prisma.services.findUnique({
-      where: { id },
-    });
+  testimonial: z
+    .string()
+    .trim()
+    .min(1, "Testimonial is required")
+    .max(3000, "Testimonial must not exceed 3000 characters")
+    .optional(),
 
-    if (!existingService) {
-      return error({
-        status: 404,
-        message: "Service not found",
-      });
-    }
+  order: z.coerce
+    .number()
+    .int("Order must be an integer")
+    .min(1, "Order must be at least 1")
+    .optional(),
 
-    const formData = await req.formData();
-
-    const title = formData.get("title");
-    const description = formData.get("description");
-    const order = formData.get("order");
-    const isActive = formData.get("isActive");
-    const imageFile = formData.get("image");
-
-    // Validate fields
-    const parsed = serviceUpdateSchema.safeParse({
-      ...(title !== null && {
-        title: typeof title === "string" ? title : "",
-      }),
-
-      ...(description !== null && {
-        description: typeof description === "string" ? description : "",
-      }),
-
-      ...(order !== null && {
-        order: typeof order === "string" ? order : "",
-      }),
-
-      ...(isActive !== null && {
-        isActive: typeof isActive === "string" ? isActive : "",
-      }),
-    });
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid fields",
-          errors: parsed.error.flatten(),
-        },
-        { status: 400 }
-      );
-    }
-
-    // Validate image field
-    if (
-      imageFile !== null &&
-      typeof imageFile !== "string" &&
-      !(imageFile instanceof File)
-    ) {
-      return error({
-        status: 400,
-        message: "Invalid image file",
-      });
-    }
-
-    // Keep existing image by default
-    let imagePath: string | null = existingService.image;
-
-    // Upload new image if provided
-    if (imageFile instanceof File && imageFile.size > 0) {
-      if (!imageFile.type.startsWith("image/")) {
-        return error({
-          status: 400,
-          message: "Only image files are allowed",
-        });
-      }
-
-      if (imageFile.size > 5 * 1024 * 1024) {
-        return error({
-          status: 400,
-          message: "Image size must not exceed 5MB",
-        });
-      }
-
-      const uploaded = await uploadImage(
-        imageFile,
-        "services"
-      );
-
-      imagePath = uploaded.path;
-    }
-
-    // Update service
-    const service = await prisma.services.update({
-      where: { id },
-      data: {
-        ...parsed.data,
-        image: imagePath,
-      },
-    });
-
-    return success({
-      message: "Service updated successfully",
-      data: withAbsoluteAssetUrls(service, req.url),
-    });
-  } catch (err) {
-    console.error("UPDATE SERVICE:", err);
-
-    return error({
-      status: 500,
-      message: "Failed to update service",
-    });
-  }
-}
+  isActive: formBoolean.optional(),
+});
 
 // ==============================
-// DELETE SERVICE
+// TYPES
 // ==============================
-export async function DELETE(
-  req: NextRequest,
-  { params }: RouteContext
-) {
-  const authCheck = await requireAdmin();
+export type TestimonialCreateInput = z.infer<
+  typeof testimonialCreateSchema
+>;
 
-  if (!authCheck.ok) {
-    return authCheck.response;
-  }
-
-  try {
-    const { id } = await params;
-
-    const existingService = await prisma.services.findUnique({
-      where: { id },
-    });
-
-    if (!existingService) {
-      return error({
-        status: 404,
-        message: "Service not found",
-      });
-    }
-
-    await prisma.services.delete({
-      where: { id },
-    });
-
-    return success({
-      message: "Service deleted successfully",
-    });
-  } catch (err) {
-    console.error("DELETE SERVICE:", err);
-
-    return error({
-      status: 500,
-      message: "Failed to delete service",
-    });
-  }
-}
+export type TestimonialUpdateInput = z.infer<
+  typeof testimonialUpdateSchema
+>;
