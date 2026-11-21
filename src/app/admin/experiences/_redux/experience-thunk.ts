@@ -11,7 +11,6 @@ import type {
   ExperienceResponse,
 } from "../_types/experience";
 
-const API_URL = "/api/v1/experiences";
 
 // ==============================
 // CREATE FORM DATA
@@ -67,8 +66,8 @@ export const fetchExperiences = createAsyncThunk<
   async (params = {}, { rejectWithValue }) => {
     try {
       const response = await axios.get<ExperienceListResponse>(
-        API_URL,
-        { params }
+        "/api/v1/admin/experiences",
+        { params },
       );
 
       return response.data;
@@ -92,7 +91,7 @@ export const fetchExperience = createAsyncThunk<
   async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get<ExperienceResponse>(
-        `${API_URL}/${id}`
+        `/api/v1/admin/experiences/${id}`,
       );
 
       return response.data.data;
@@ -120,8 +119,8 @@ export const createExperience = createAsyncThunk<
   async (data, { rejectWithValue }) => {
     try {
       const response = await axios.post<ExperienceResponse>(
-        API_URL,
-        createFormData(data)
+        "/api/v1/admin/experiences",
+        createFormData(data),
       );
 
       toast.success(
@@ -154,8 +153,8 @@ export const updateExperience = createAsyncThunk<
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await axios.patch<ExperienceResponse>(
-        `${API_URL}/${id}`,
-        createFormData(data)
+        `/api/v1/admin/experiences/${id}`,
+        createFormData(data),
       );
 
       toast.success(
@@ -187,9 +186,7 @@ export const deleteExperience = createAsyncThunk<
   "experiences/deleteExperience",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(
-        `${API_URL}/${id}`
-      );
+      const response = await axios.delete(`/api/v1/admin/experiences/${id}`);
 
       toast.success(
         response.data.message ||
