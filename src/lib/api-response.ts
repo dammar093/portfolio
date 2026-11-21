@@ -1,17 +1,57 @@
 import { NextResponse } from "next/server";
 
-interface ISuccessProps {
-  data?: any;
-  message?: string;
+type SuccessResponse<T> = {
+  success: true;
+  message: string;
+  data: T;
+  meta?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+type SuccessOptions<T> = {
+  message: string;
+  data: T;
   status?: number;
-}
-interface IErrorProps {
-  message?: string;
-  status?: number;
+  meta?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+export function success<T>({
+  message,
+  data,
+  status = 200,
+  meta,
+}: SuccessOptions<T>) {
+  const response: SuccessResponse<T> = {
+    success: true,
+    message,
+    data,
+    ...(meta && { meta }),
+  };
+
+  return NextResponse.json(response, { status });
 }
 
-export const success = ({ data, message = "Success", status = 200 }: ISuccessProps) =>
-  NextResponse.json({ message, data }, { status });
-
-export const error = ({ message, status = 500 }: IErrorProps) =>
-  NextResponse.json({ status: message, message }, { status });
+export function error({
+  message,
+  status = 500,
+}: {
+  message: string;
+  status?: number;
+}) {
+  return NextResponse.json(
+    {
+      success: false,
+      message,
+    },
+    { status },
+  );
+}
