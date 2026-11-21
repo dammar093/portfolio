@@ -74,6 +74,7 @@ const LanguageDataTable = memo(function LanguageDataTable({
           <TableHead>Name</TableHead>
           <TableHead>Order</TableHead>
           <TableHead>Projects</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead className="w-32">Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -81,9 +82,7 @@ const LanguageDataTable = memo(function LanguageDataTable({
       <TableBody>
         {languages.map((language, index) => (
           <TableRow key={language.id}>
-            <TableCell>
-              {(meta.page - 1) * meta.limit + index + 1}
-            </TableCell>
+            <TableCell>{(meta.page - 1) * meta.limit + index + 1}</TableCell>
 
             <TableCell>
               {language.image ? (
@@ -97,9 +96,7 @@ const LanguageDataTable = memo(function LanguageDataTable({
                   />
                 </div>
               ) : (
-                <span className="text-xs text-muted-foreground">
-                  No image
-                </span>
+                <span className="text-xs text-muted-foreground">No image</span>
               )}
             </TableCell>
 
@@ -109,8 +106,18 @@ const LanguageDataTable = memo(function LanguageDataTable({
 
             <TableCell>{language.order}</TableCell>
 
+            <TableCell>{language._count?.projects ?? 0}</TableCell>
+
             <TableCell>
-              {language._count?.projects ?? 0}
+              {language.isActive ? (
+                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                  Active
+                </span>
+              ) : (
+                <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                  Inactive
+                </span>
+              )}
             </TableCell>
 
             <TableCell>
@@ -130,9 +137,7 @@ const LanguageDataTable = memo(function LanguageDataTable({
                     </Button>
                   </TooltipTrigger>
 
-                  <TooltipContent>
-                    Edit Language
-                  </TooltipContent>
+                  <TooltipContent>Edit Language</TooltipContent>
                 </Tooltip>
 
                 {/* Delete */}
@@ -149,9 +154,7 @@ const LanguageDataTable = memo(function LanguageDataTable({
                     </Button>
                   </TooltipTrigger>
 
-                  <TooltipContent>
-                    Delete Language
-                  </TooltipContent>
+                  <TooltipContent>Delete Language</TooltipContent>
                 </Tooltip>
               </div>
             </TableCell>
@@ -222,7 +225,6 @@ export function LanguagesTable() {
     handleDeleteLanguage,
   } = useLanguages();
 
-  // Add these states
   const [selectedLanguage, setSelectedLanguage] =
     useState<LanguageItem | null>(null);
 

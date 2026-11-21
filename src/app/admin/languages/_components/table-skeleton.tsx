@@ -1,5 +1,6 @@
 
 import { Skeleton } from "@/components/ui/skeleton";
+
 import {
   Table,
   TableBody,
@@ -19,6 +20,7 @@ export function TableSkeleton() {
           <TableHead>Name</TableHead>
           <TableHead>Order</TableHead>
           <TableHead>Projects</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -29,18 +31,27 @@ export function TableSkeleton() {
             <TableCell>
               <Skeleton className="h-4 w-8" />
             </TableCell>
+
             <TableCell>
-              <Skeleton className="h-12 w-16 rounded" />
+              <Skeleton className="h-12 w-12 rounded" />
             </TableCell>
+
             <TableCell>
               <Skeleton className="h-4 w-32" />
             </TableCell>
+
             <TableCell>
               <Skeleton className="h-4 w-8" />
             </TableCell>
+
             <TableCell>
               <Skeleton className="h-4 w-10" />
             </TableCell>
+
+            <TableCell>
+              <Skeleton className="h-5 w-16 rounded-full" />
+            </TableCell>
+
             <TableCell>
               <div className="flex items-center gap-1">
                 <Skeleton className="h-8 w-8 rounded" />

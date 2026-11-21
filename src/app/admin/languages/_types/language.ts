@@ -7,6 +7,7 @@ export type LanguageItem = {
   _count?: {
     projects: number;
   };
+  isActive: Boolean;
   createdAt: string;
   updatedAt: string;
 };

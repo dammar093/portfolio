@@ -85,7 +85,9 @@ const LanguageForm = () => {
                         ? field.value
                         : ""
                     }
-                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    onChange={(event) =>
+                      field.onChange(Number(event.target.value))
+                    }
                     placeholder="Enter display order"
                     disabled={isSubmitting}
                   />
@@ -98,6 +100,34 @@ const LanguageForm = () => {
                 </Field>
               )}
             />
+          </div>
+
+          {/* Active Language */}
+          <div className="flex items-center gap-3 pt-7">
+            <Controller
+              name="isActive"
+              control={form.control}
+              render={({ field }) => (
+                <input
+                  id="isActive"
+                  type="checkbox"
+                  name={field.name}
+                  ref={field.ref}
+                  checked={Boolean(field.value)}
+                  onBlur={field.onBlur}
+                  onChange={(event) => field.onChange(event.target.checked)}
+                  disabled={isSubmitting}
+                  className="h-4 w-4 rounded border-gray-300"
+                />
+              )}
+            />
+
+            <label
+              htmlFor="isActive"
+              className="cursor-pointer text-sm font-medium"
+            >
+              Active Language
+            </label>
           </div>
 
           {/* Language Image */}
@@ -189,11 +219,7 @@ const LanguageForm = () => {
                 </span>
               </>
             ) : (
-              <>
-                <span>
-                  {isEdit ? "Update Language/Tool" : "Create Language/Tool"}
-                </span>
-              </>
+              <span>{isEdit ? "Update Language" : "Create Language"}</span>
             )}
           </Button>
         </FieldGroup>

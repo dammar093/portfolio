@@ -25,6 +25,12 @@ export const LanguageFormSkeleton = ({
         </div>
       </div>
 
+      {/* Active Language */}
+      <div className="flex items-center gap-3 pt-7">
+        <Skeleton className="h-4 w-4 rounded-sm" />
+        <Skeleton className="h-4 w-32" />
+      </div>
+
       {/* Language Image */}
       <div className="space-y-2">
         <Skeleton className="h-4 w-28" />

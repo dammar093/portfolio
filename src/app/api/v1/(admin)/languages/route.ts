@@ -4,10 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/require-admin";
 import { uploadImage } from "@/lib/upload-image";
 import { withAbsoluteAssetUrls } from "@/lib/absolute-asset-urls";
+
 import { languageCreateSchema } from "@/app/admin/languages/_schema/language-schema";
+
 import type { Prisma } from "@/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-
 
 // ==============================
 // CREATE LANGUAGE
@@ -22,13 +23,14 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
 
-    const payload = Object.fromEntries(
-      formData.entries()
-    );
+    const name = formData.get("name");
+    const order = formData.get("order");
+    const isActive = formData.get("isActive");
 
     const parsed = languageCreateSchema.safeParse({
-      name: payload.name,
-      order: payload.order || 1,
+      name,
+      order: order || 1,
+      ...(isActive !== null && { isActive }),
     });
 
     if (!parsed.success) {
@@ -38,17 +40,19 @@ export async function POST(req: NextRequest) {
           message: "Invalid fields",
           errors: parsed.error.flatten(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const { name, order } = parsed.data;
-
-    const image = formData.get("image");
+    const {
+      name: languageName,
+      order: languageOrder,
+      isActive: languageIsActive,
+    } = parsed.data;
 
     // Check duplicate language
     const existingLanguage = await prisma.language.findUnique({
-      where: { name },
+      where: { name: languageName },
     });
 
     if (existingLanguage) {
@@ -58,6 +62,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Upload image
+    const image = formData.get("image");
+
     let imagePath: string | null = null;
 
     if (image instanceof File && image.size > 0) {
@@ -65,20 +72,26 @@ export async function POST(req: NextRequest) {
       imagePath = uploaded.path;
     }
 
+    // Create language
     const language = await prisma.language.create({
       data: {
-        name,
-        order,
+        name: languageName,
+        order: languageOrder,
+        isActive: languageIsActive,
         image: imagePath,
       },
     });
 
+    const responseData = withAbsoluteAssetUrls(language, req.url);
+
     return success({
       message: "Language created successfully",
-      data: withAbsoluteAssetUrls(language, req.url),
+      data: {
+        ...responseData,
+        isActive: language.isActive,
+      },
       status: 201,
     });
-
   } catch (err) {
     console.error("Create language error:", err);
 
@@ -88,7 +101,6 @@ export async function POST(req: NextRequest) {
     });
   }
 }
-
 
 // ==============================
 // GET ALL LANGUAGES
@@ -118,12 +130,11 @@ export async function GET(req: NextRequest) {
           success: false,
           message: "Invalid pagination parameters",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const search = searchParams.get("search")?.trim();
-
     const skip = (page - 1) * limit;
 
     if (!Number.isSafeInteger(skip)) {
@@ -142,7 +153,7 @@ export async function GET(req: NextRequest) {
       };
     }
 
-    const [data, total] = await Promise.all([
+    const [languages, total] = await Promise.all([
       prisma.language.findMany({
         where,
         skip,
@@ -163,11 +174,17 @@ export async function GET(req: NextRequest) {
       prisma.language.count({ where }),
     ]);
 
+    // Explicitly preserve isActive after processing image URLs
+    const data = languages.map((language) => ({
+      ...withAbsoluteAssetUrls(language, req.url),
+      isActive: language.isActive,
+    }));
+
     return NextResponse.json(
       {
         success: true,
         message: "Languages fetched successfully",
-        data: withAbsoluteAssetUrls(data, req.url),
+        data,
         meta: {
           page,
           limit,
@@ -175,9 +192,8 @@ export async function GET(req: NextRequest) {
           totalPages: Math.ceil(total / limit),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
-
   } catch (err) {
     console.error("Fetch languages error:", err);
 
