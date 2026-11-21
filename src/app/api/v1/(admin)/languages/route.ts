@@ -27,10 +27,16 @@ export async function POST(req: NextRequest) {
     const order = formData.get("order");
     const isActive = formData.get("isActive");
 
+    // Validate fields
     const parsed = languageCreateSchema.safeParse({
-      name,
-      order: order || 1,
-      ...(isActive !== null && { isActive }),
+      name: typeof name === "string" ? name : "",
+      order: typeof order === "string" && order !== "" ? order : 1,
+      isActive:
+        isActive === null
+          ? true
+          : typeof isActive === "string"
+            ? isActive
+            : "",
     });
 
     if (!parsed.success) {
@@ -68,6 +74,20 @@ export async function POST(req: NextRequest) {
     let imagePath: string | null = null;
 
     if (image instanceof File && image.size > 0) {
+      if (!image.type.startsWith("image/")) {
+        return error({
+          status: 400,
+          message: "Please upload a valid image",
+        });
+      }
+
+      if (image.size > 5 * 1024 * 1024) {
+        return error({
+          status: 400,
+          message: "Image must be smaller than 5 MB",
+        });
+      }
+
       const uploaded = await uploadImage(image, "languages");
       imagePath = uploaded.path;
     }
@@ -82,14 +102,14 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const responseData = withAbsoluteAssetUrls(language, req.url);
+    const responseData = withAbsoluteAssetUrls(
+      language,
+      req.url,
+    );
 
     return success({
       message: "Language created successfully",
-      data: {
-        ...responseData,
-        isActive: language.isActive,
-      },
+      data: responseData,
       status: 201,
     });
   } catch (err) {
@@ -174,7 +194,6 @@ export async function GET(req: NextRequest) {
       prisma.language.count({ where }),
     ]);
 
-    // Explicitly preserve isActive after processing image URLs
     const data = languages.map((language) => ({
       ...withAbsoluteAssetUrls(language, req.url),
       isActive: language.isActive,

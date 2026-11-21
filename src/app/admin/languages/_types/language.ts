@@ -4,10 +4,10 @@ export type LanguageItem = {
   name: string;
   image: string | null;
   order: number;
+  isActive: boolean;
   _count?: {
     projects: number;
   };
-  isActive: Boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -42,4 +42,19 @@ export type LanguageFormValues = {
   name: string;
   order: number;
   image: File | null;
+  isActive: boolean;
+};
+
+export type LanguageCreateInput = {
+  name: string;
+  order: number;
+  image?: File | null;
+  isActive: boolean;
+};
+
+export type LanguageUpdateInput = {
+  name?: string;
+  order?: number;
+  image?: File | null;
+  isActive?: boolean;
 };

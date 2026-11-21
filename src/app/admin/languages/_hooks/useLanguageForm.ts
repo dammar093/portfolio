@@ -78,6 +78,7 @@ export const useLanguageForm = () => {
       name: currentLanguage.name ?? "",
       order: currentLanguage.order ?? 1,
       image: null,
+      isActive: currentLanguage.isActive ?? false,
     });
 
     setImagePreview(currentLanguage.image ?? null);
@@ -86,29 +87,27 @@ export const useLanguageForm = () => {
   // Submit form
   const onSubmit = useCallback(
     async (data: LanguageFormOutput) => {
+      if (isSubmitting) return;
+
       setIsSubmitting(true);
 
       try {
+        const payload = {
+          name: data.name,
+          order: data.order,
+          image: data.image,
+          isActive: data.isActive,
+        };
+
         if (isEdit && id) {
           await dispatch(
             updateLanguage({
               id,
-              data: {
-                name: data.name,
-                order: data.order,
-                image: data.image,
-              },
-            })
-          ).unwrap();
-        } else {
-          await dispatch(
-            createLanguage({
-              name: data.name,
-              order: data.order,
-              image: data.image,
-              isActive: data.isActive,
+              data: payload,
             }),
           ).unwrap();
+        } else {
+          await dispatch(createLanguage(payload)).unwrap();
         }
 
         form.reset();
@@ -123,7 +122,7 @@ export const useLanguageForm = () => {
         setIsSubmitting(false);
       }
     },
-    [dispatch, form, id, isEdit, router]
+    [dispatch, form, id, isEdit, router, isSubmitting],
   );
 
   // Image selection
@@ -164,7 +163,9 @@ export const useLanguageForm = () => {
       const reader = new FileReader();
 
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        if (typeof reader.result === "string") {
+          setImagePreview(reader.result);
+        }
       };
 
       reader.readAsDataURL(file);

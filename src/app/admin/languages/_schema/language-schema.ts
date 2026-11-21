@@ -1,6 +1,16 @@
 
 import { z } from "zod";
 
+// Convert FormData string values into actual booleans
+const formBoolean = z.preprocess(
+  (value) => {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    return value;
+  },
+  z.boolean()
+);
+
 export const languageCreateSchema = z.object({
   name: z
     .string()
@@ -14,7 +24,7 @@ export const languageCreateSchema = z.object({
     .min(1, "Order must be at least 1")
     .default(1),
 
-  isActive: z.coerce.boolean().default(true),
+  isActive: formBoolean.default(true),
 });
 
 export const languageUpdateSchema = z.object({
@@ -25,9 +35,13 @@ export const languageUpdateSchema = z.object({
     .max(100, "Language name is too long")
     .optional(),
 
-  order: z.coerce.number().int("Order must be an integer").min(1).optional(),
+  order: z.coerce
+    .number()
+    .int("Order must be an integer")
+    .min(1, "Order must be at least 1")
+    .optional(),
 
-  isActive: z.boolean().optional(),
+  isActive: formBoolean.optional(),
 });
 
 export type LanguageCreateInput = z.infer<

@@ -49,14 +49,14 @@ export async function GET(
       });
     }
 
-    const responseData = withAbsoluteAssetUrls(language, req.url);
+    const responseData = withAbsoluteAssetUrls(
+      language,
+      req.url,
+    );
 
     return success({
       message: "Language fetched successfully",
-      data: {
-        ...responseData,
-        isActive: language.isActive,
-      },
+      data: responseData,
     });
   } catch (err) {
     console.error("Get language error:", err);
@@ -101,10 +101,19 @@ export async function PATCH(
     const order = formData.get("order");
     const isActive = formData.get("isActive");
 
+    // Validate only fields provided in FormData
     const parsed = languageUpdateSchema.safeParse({
-      ...(name !== null && { name }),
-      ...(order !== null && { order }),
-      ...(isActive !== null && { isActive }),
+      ...(name !== null && {
+        name: typeof name === "string" ? name : "",
+      }),
+
+      ...(order !== null && {
+        order: typeof order === "string" ? order : "",
+      }),
+
+      ...(isActive !== null && {
+        isActive: typeof isActive === "string" ? isActive : "",
+      }),
     });
 
     if (!parsed.success) {
@@ -147,6 +156,20 @@ export async function PATCH(
     let imagePath = existingLanguage.image;
 
     if (image instanceof File && image.size > 0) {
+      if (!image.type.startsWith("image/")) {
+        return error({
+          status: 400,
+          message: "Please upload a valid image",
+        });
+      }
+
+      if (image.size > 5 * 1024 * 1024) {
+        return error({
+          status: 400,
+          message: "Image must be smaller than 5 MB",
+        });
+      }
+
       const uploaded = await uploadImage(image, "languages");
       imagePath = uploaded.path;
     }
@@ -171,14 +194,14 @@ export async function PATCH(
       },
     });
 
-    const responseData = withAbsoluteAssetUrls(language, req.url);
+    const responseData = withAbsoluteAssetUrls(
+      language,
+      req.url,
+    );
 
     return success({
       message: "Language updated successfully",
-      data: {
-        ...responseData,
-        isActive: language.isActive,
-      },
+      data: responseData,
     });
   } catch (err) {
     console.error("Update language error:", err);
