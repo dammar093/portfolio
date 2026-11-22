@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
         protocol: "http",
         hostname: "localhost",
         port: "3000"
+      },
+      {
+        protocol: "https",
+        hostname: "www.dammarrana.com.np",
+        port: "",
+        pathname: "/uploads/**",
+        search: "",
       }
     ]
   }
