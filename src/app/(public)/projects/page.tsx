@@ -68,26 +68,29 @@ export async function generateMetadata(): Promise<Metadata> {
 
   if (!seo) {
   }
+  const title = seo.og_ttile || "Projects & Portifolio";
+  const description = seo.og_description || "";
+  const keywords = seo.keywords
+    ? seo.keywords.split(",").map((keyword: string) => keyword.trim())
+    : undefined;
+  const image = seo.og_image || "";
 
   return {
-    title: seo.og_ttile || "Porjects & Portfolio",
-    description: seo.og_description || "",
-    keywords: seo.keywords
-      ? seo.keywords.split(",").map((keyword: string) => keyword.trim())
-      : undefined,
-
+    title,
+    description,
+    keywords,
     openGraph: {
-      title: seo.og_ttile || "Porjects & Portfolio",
-      description: seo.og_description || "",
-      images: seo.og_image ? [seo.og_image] : [],
+      title,
+      description,
+      images: image ? [image] : [],
       type: "website",
     },
 
     twitter: {
       card: "summary_large_image",
-      title: seo.og_ttile || "Porjects & Portfolio",
-      description: seo.og_description || "",
-      images: seo.og_image ? [seo.og_image] : [],
+      title,
+      description,
+      images: image ? [image] : [],
     },
 
     alternates: {
