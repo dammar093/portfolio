@@ -49,7 +49,7 @@ const SkillSection = async () => {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <Code2 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <Code2 className="h-6 w-6 text-teal-500 dark:text-teal-500" />
 
             <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 md:text-2xl">
               Skills & Technologies
@@ -61,7 +61,7 @@ const SkillSection = async () => {
           </p>
         </div>
 
-        <span className="shrink-0 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+        <span className="shrink-0 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-teal-500 dark:bg-blue-900/30 dark:text-teal-500">
           {activeSkills.length} Skills
         </span>
       </div>

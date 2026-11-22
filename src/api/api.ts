@@ -63,4 +63,22 @@ export const fetchExperiences = async () => {
   }
 };
 
+export const fetchProjects = async () => {
+  try {
+    const res = await axios(`${baseUrl}/api/v1/projects`);
+    return res.data.data;
+  } catch (error) {
+    console.error("Failed to fetch", error);
+  }
+};
+
+export const fetchProjectBySlug = async (slug: string) => {
+  try {
+    const res = await axios(`${baseUrl}/api/v1/projects/${slug}`);
+    return res.data.data;
+  } catch (error) {
+    console.error("Failed to fetch", error);
+  }
+};
+
 

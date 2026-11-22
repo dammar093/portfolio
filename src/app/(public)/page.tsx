@@ -6,7 +6,7 @@ import SkillSection from "@/components/SkillSection";
 
 const Home = () => {
   return (
-    <section className="px-2 md:px-20 w-full h-full flex flex-col items-center gap-10">
+    <section className=" w-full h-full flex flex-col items-center gap-10">
       <HeroSection />
       <SkillSection />
       <ExperienceSection />

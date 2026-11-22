@@ -43,7 +43,7 @@ const ExperienceCard = ({ experience }: { experience: ExperienceItem }) => {
               {experience.position}
             </h2>
 
-            <p className="mt-1 text-sm font-medium text-blue-600 dark:text-blue-400">
+            <p className="mt-1 text-sm font-medium text-teal-500 dark:text-teal-500">
               {experience.company}
             </p>
           </div>
@@ -99,7 +99,7 @@ const ExperienceSection = async () => {
           <div className="flex items-center gap-2">
             <BriefcaseBusiness
               size={22}
-              className="text-blue-600 dark:text-blue-400"
+              className="text-teal-500 dark:text-teal-500"
             />
 
             <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 md:text-2xl">
@@ -112,7 +112,7 @@ const ExperienceSection = async () => {
           </p>
         </div>
 
-        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-teal-500 dark:bg-gray-800 dark:text-teal-500">
           {experiences.length}{" "}
           {experiences.length === 1 ? "Experience" : "Experiences"}
         </span>
