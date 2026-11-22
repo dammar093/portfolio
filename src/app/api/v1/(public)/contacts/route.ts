@@ -5,32 +5,8 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { error, success } from "@/lib/api-response";
 import { sendContactEmails } from "@/lib/email/mailer";
+import { contactSchema } from "@/app/admin/contacts/_schema/contact-schema";
 
-const contactSchema = z.object({
-  fullname: z
-    .string()
-    .trim()
-    .min(2, "Full name must be at least 2 characters")
-    .max(100, "Full name is too long"),
-
-  email: z
-    .string()
-    .trim()
-    .email("Please enter a valid email address")
-    .max(254, "Email address is too long"),
-
-  forWhat: z
-    .string()
-    .trim()
-    .min(1, "Inquiry type is required")
-    .max(150, "Inquiry type is too long"),
-
-  message: z
-    .string()
-    .trim()
-    .min(10, "Message must be at least 10 characters")
-    .max(5000, "Message is too long"),
-});
 
 // =====================================
 // PUBLIC CONTACT POST

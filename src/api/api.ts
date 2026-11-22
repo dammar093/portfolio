@@ -1,3 +1,4 @@
+import { ContactFormData } from "@/app/admin/contacts/_schema/contact-schema";
 import { SeoType } from "@/generated/prisma/enums";
 import axios from "axios";
 export const dynamic = "force-dynamic";
@@ -12,7 +13,6 @@ export const fetchPageBySlug = async (slug: string) => {
     console.error("Failed to fetch", error);
   }
 };
-
 
 export const fetchSeoBySlugAndType = async (slug: string, seoType: SeoType) => {
   try {
@@ -35,8 +35,6 @@ export const fetchSeoBySlugAndType = async (slug: string, seoType: SeoType) => {
     return null;
   }
 };
-
-
 
 export const fetchSeoSettings = async () => {
   try {
@@ -62,7 +60,6 @@ export const fetchSeoSettings = async () => {
   }
 };
 
-
 export const fetchSetting = async () => {
   try {
     const res = await axios(`${baseUrl}/api/v1/settings`);
@@ -80,7 +77,6 @@ export const fetchLanuage = async () => {
     console.error("Failed to fetch", error);
   }
 };
-
 
 export const fetchExperiences = async () => {
   try {
@@ -127,7 +123,6 @@ export const fetchBlogBySlug = async (slug: string) => {
   }
 };
 
-
 export const fetchServices = async () => {
   try {
     const res = await axios.get(`${baseUrl}/api/v1/services`);
@@ -137,5 +132,28 @@ export const fetchServices = async () => {
   }
 };
 
+export const createContact = async (data: ContactFormData) => {
+  try {
+    const res = await axios.post("/api/v1/contacts", data);
+    return res.data as { success: boolean; message: string };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const fieldErrors = error.response?.data?.errors?.fieldErrors as
+        | Record<string, string[]>
+        | undefined;
 
+      const details = fieldErrors
+        ? Object.entries(fieldErrors)
+            .map(([field, msgs]) => `${field}: ${msgs.join(", ")}`)
+            .join(" | ")
+        : "";
 
+      throw new Error(
+        [error.response?.data?.message || "Something went wrong.", details]
+          .filter(Boolean)
+          .join(" - "),
+      );
+    }
+    throw error;
+  }
+};
