@@ -1,8 +1,9 @@
 
 "use client";
 
-import { useState, memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -11,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 
 import {
   Table,
@@ -42,12 +42,11 @@ import {
 import Paginations from "@/components/admin/shared/Paginations";
 
 import {
-  Trash2,
-  LoaderCircle,
   Eye,
-  Mail,
-  MessageSquare,
   Inbox,
+  LoaderCircle,
+  Mail,
+  Trash2
 } from "lucide-react";
 
 import Link from "next/link";

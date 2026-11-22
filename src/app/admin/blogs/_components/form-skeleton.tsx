@@ -1,10 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const BlogFormSkeleton = ({
-  isEdit,
-}: {
-  isEdit: boolean;
-}) => {
+export const BlogFormSkeleton = () => {
   return (
     <div
       className="mx-auto w-full space-y-7 py-5"

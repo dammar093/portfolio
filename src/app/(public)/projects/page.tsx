@@ -11,14 +11,6 @@ import { SeoItem } from "@/types/seo-type";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_FRONTEND_URL ??
-  process.env.AUTH_URL ??
-  "http://localhost:3000";
-const projectsUrl = new URL("/projects", siteUrl);
-const absoluteAssetUrl = (assetPath: string) =>
-  new URL(assetPath, siteUrl).toString();
-
 const Projects = async () => {
   const [page, projects] = await Promise.all([
     fetchPageBySlug("projects"),
