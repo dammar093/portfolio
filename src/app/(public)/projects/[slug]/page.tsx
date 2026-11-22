@@ -3,7 +3,11 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
 import { ImageWithLoader } from "@/components/shared/ImageWithLoader";
-import { fetchProjectBySlug } from "@/api/api";
+import { fetchProjectBySlug, fetchSeoBySlugAndType } from "@/api/api";
+import { ProjectItem } from "@/app/admin/projects/_types/project";
+import { JsonLd } from "@/components/shared/JsonLoad";
+import type { Metadata } from "next";
+import { SeoType } from "@/generated/prisma/enums";
 
 type ProjectDetailPageProps = {
   params: Promise<{
@@ -14,7 +18,7 @@ type ProjectDetailPageProps = {
 const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
   const { slug } = await params;
 
-  const project = await fetchProjectBySlug(slug);
+  const project: ProjectItem = await fetchProjectBySlug(slug);
 
   if (!project) {
     notFound();
@@ -26,6 +30,10 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
 
   return (
     <main className="px-4 py-10 md:py-14">
+      {project.seo?.schema_markup && (
+        <JsonLd data={project.seo.schema_markup} />
+      )}
+
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-10">
         {/* Back Button */}
         <Link
@@ -113,3 +121,41 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
 };
 
 export default ProjectDetailPage;
+
+
+// generateMetadata 
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await fetchSeoBySlugAndType("projects", SeoType.PROJECT);
+
+  if (!seo) {
+    return {
+      
+    };
+  }
+
+  return {
+    title: seo.og_title,
+    description: seo.og_description || "",
+    keywords: seo.keywords
+      ? seo.keywords.split(",").map((keyword: string) => keyword.trim())
+      : undefined,
+
+    openGraph: {
+      title: seo.og_title,
+      description: seo.og_description || "",
+      images: seo.og_image ? [seo.og_image] : [],
+      type: "website",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: seo.og_title ,
+      description: seo.og_description || "",
+      images: seo.og_image ? [seo.og_image] : [],
+    },
+
+    alternates: {
+      canonical: seo.canonical_url || undefined,
+    },
+  };
+}

@@ -1,19 +1,28 @@
 import { fetchSetting } from "@/api/api";
 import { ImageWithLoader } from "./shared/ImageWithLoader";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 const HeroSection = async () => {
   const setting = await fetchSetting();
   return (
     <section className="w-full flex items-start gap-5">
       {/* Content */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 flex flex-col gap-4">
         <h1 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-gray-200">
           {setting?.name}
         </h1>
 
-        <p className="mt-4 text-gray-600 dark:text-gray-400 text-justify">
+        <p className=" text-gray-600 dark:text-gray-400 text-justify">
           {setting?.description}
         </p>
+        <Link
+          href={`/contacts`}
+          className="flex w-fit items-center justify-center gap-2 rounded-lg bg-teal-500 px-3 py-2.5 text-sm font-semibold text-white"
+        >
+          Contact Us
+          <ArrowUpRight size={16} />
+        </Link>
       </div>
 
       {/* Logo */}

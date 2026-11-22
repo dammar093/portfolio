@@ -19,7 +19,7 @@ export async function GET(req: NextRequest, context: SeoRouteContext) {
     if (!Object.values(SeoType).includes(seoType as SeoType)) {
       return error({
         status: 400,
-        message: "Invalid SEO type",
+        message: `Invalid SEO type: ${seoType}`,
       });
     }
 
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest, context: SeoRouteContext) {
       data: withAbsoluteAssetUrls(seo, req.url),
     });
   } catch (err) {
-    console.error("GET SEO Error:", err);
+    console.error("GET_SEO_ERROR:", err);
 
     return error({
       status: 500,

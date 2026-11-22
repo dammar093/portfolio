@@ -60,4 +60,40 @@ const Projects = async () => {
 
 export default Projects;
 
-// generateMetadata stays the same
+// generateMetadata 
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await fetchSeoBySlugAndType("projects", SeoType.PAGE);
+
+  if (!seo) {
+    return {
+      title: "Blogs & Articles",
+      description: "Explore articles, tutorials, experiences, and insights.",
+    };
+  }
+
+  return {
+    title: seo.og_title || "Blogs & Articles",
+    description: seo.og_description || "",
+    keywords: seo.keywords
+      ? seo.keywords.split(",").map((keyword: string) => keyword.trim())
+      : undefined,
+
+    openGraph: {
+      title: seo.og_title || "Blogs & Articles",
+      description: seo.og_description || "",
+      images: seo.og_image ? [seo.og_image] : [],
+      type: "website",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: seo.og_title || "Blogs & Articles",
+      description: seo.og_description || "",
+      images: seo.og_image ? [seo.og_image] : [],
+    },
+
+    alternates: {
+      canonical: seo.canonical_url || undefined,
+    },
+  };
+}

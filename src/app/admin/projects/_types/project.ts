@@ -1,3 +1,4 @@
+import { SeoItem } from "@/types/seo-type";
 
 export interface ProjectSeo {
   id: string;
@@ -33,9 +34,9 @@ export interface ProjectItem {
   order: number;
   isActive: boolean;
   languages: ProjectLanguageRelation[];
-  seo?: ProjectSeo | null;
   createdAt: string;
   updatedAt: string;
+  seo: SeoItem;
 }
 
 export interface ProjectQueryParams {
