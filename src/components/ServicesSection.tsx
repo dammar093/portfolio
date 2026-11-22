@@ -1,8 +1,9 @@
-import { Briefcase } from "lucide-react";
+import { ArrowUpRight, Briefcase } from "lucide-react";
 
 import { fetchServices } from "@/api/api";
 import type { ServiceItem } from "@/app/admin/services/_types/service";
 import ServiceCard from "./ServcieCard";
+import Link from "next/link";
 
 const ServiceSection = async () => {
   const services: ServiceItem[] = (await fetchServices()) ?? [];
@@ -26,9 +27,22 @@ const ServiceSection = async () => {
           </p>
         </div>
 
-        <span className="shrink-0 rounded-full bg-teal-500/10 px-3 py-1.5 text-xs font-semibold text-teal-500">
-          {count} {count === 1 ? "Service" : "Services"}
-        </span>
+        <div className="flex flex-wrap items-center justify-end md:justify-between gap-3 ">
+          <span className="shrink-0 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-teal-500 dark:bg-blue-900/30 dark:text-teal-500">
+            {services?.length ?? 0} Services
+          </span>
+
+          <Link
+            href="/services"
+            className="group flex w-fit items-center gap-1 text-xs font-medium text-teal-500 transition-colors hover:text-teal-600 dark:hover:text-teal-400"
+          >
+            View All
+            <ArrowUpRight
+              size={14}
+              className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            />
+          </Link>
+        </div>
       </div>
 
       {/* Service Grid */}
