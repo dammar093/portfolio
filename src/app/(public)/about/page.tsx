@@ -1,4 +1,5 @@
 import { baseUrl, fetchPageBySlug, fetchSeoBySlugAndType } from "@/api/api";
+import FaqSection from "@/components/FaqsSection";
 import { JsonLd } from "@/components/shared/JsonLoad";
 import { SeoType } from "@/generated/prisma/enums";
 import type { SeoItem } from "@/types/seo-type";
@@ -29,6 +30,11 @@ const About = async () => {
               }}
             />
           </article>
+        </div>
+
+        {/* FAQs */}
+        <div className="mx-auto w-full max-w-5xl pb-8">
+          <FaqSection />
         </div>
       </section>
     </>

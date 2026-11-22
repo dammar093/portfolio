@@ -157,3 +157,13 @@ export const createContact = async (data: ContactFormData) => {
     throw error;
   }
 };
+
+export const fetchFaqs = async () => {
+  try {
+    const res = await axios.get(`${baseUrl}/api/v1/faqs`);
+    return res.data.data ?? [];
+  } catch (error) {
+    console.error("Failed to fetch faqs", error);
+    return [];
+  }
+};
