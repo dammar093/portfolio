@@ -71,7 +71,7 @@ const Contact = async () => {
     <>
       {page.seo?.schema_markup && <JsonLd data={page.seo.schema_markup} />}
 
-      <main className="px-4 py-10 md:py-14">
+      <main className="py-10 md:py-14">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-12">
           <div className="mx-auto w-full max-w-5xl space-y-8 py-8">
             {/* Heading */}
@@ -170,7 +170,8 @@ const Contact = async () => {
                     Send me a message
                   </h2>
                   <p className="mt-2 text-sm leading-7 text-gray-500 dark:text-gray-400">
-                    Fill in the details below and I&apos;ll get back to you shortly.
+                    Fill in the details below and I&apos;ll get back to you
+                    shortly.
                   </p>
                 </div>
 
