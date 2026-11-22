@@ -1,6 +1,7 @@
+import crypto from "crypto";
 import fs from "fs/promises";
 import path from "path";
-import crypto from "crypto";
+import { put } from "@vercel/blob";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
@@ -33,13 +34,37 @@ export async function uploadImage(file: File, folder: string) {
     throw new Error("Unsupported file type");
   }
 
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-
   const fileName = `${crypto.randomUUID()}${ext}`;
 
   const safeDir = safeFolder(folder);
 
+  // Vercel function filesystems are read-only and ephemeral. Store production
+  // uploads in Blob so they remain available across deployments and instances.
+  if (process.env.VERCEL || process.env.BLOB_READ_WRITE_TOKEN) {
+    if (!process.env.BLOB_READ_WRITE_TOKEN && !process.env.BLOB_STORE_ID) {
+      throw new Error(
+        "Connect a Vercel Blob store to this project before uploading files.",
+      );
+    }
+
+    const blob = await put(
+      path.posix.join(safeDir, fileName),
+      file,
+      {
+        access: "public",
+        addRandomSuffix: false,
+        contentType: file.type || undefined,
+      },
+    );
+
+    return {
+      path: blob.url,
+      size: file.size,
+    };
+  }
+
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
   const uploadDir = path.join(process.cwd(), "public", "uploads", safeDir);
 
   await fs.mkdir(uploadDir, { recursive: true });
