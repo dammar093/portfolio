@@ -167,3 +167,13 @@ export const fetchFaqs = async () => {
     return [];
   }
 };
+
+export const fetchTestimonials = async () => {
+  try {
+    const res = await axios.get(`${baseUrl}/api/v1/testimonials`);
+    return res.data.data ?? [];
+  } catch (error) {
+    console.error("Failed to fetch testimonials", error);
+    return [];
+  }
+};
