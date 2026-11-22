@@ -1,7 +1,8 @@
 import { fetchProjects } from "@/api/api";
 import { ProjectItem } from "@/app/admin/projects/_types/project";
+import { ArrowUpRight, FolderCode } from "lucide-react";
+import Link from "next/link";
 import ProjectCard from "./ProjectCard";
-import { FolderCode } from "lucide-react";
 
 const ProjectSection = async () => {
   const projects: ProjectItem[] = await fetchProjects();
@@ -24,15 +25,28 @@ const ProjectSection = async () => {
           </p>
         </div>
 
-        <span className="shrink-0 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-teal-500 dark:bg-blue-900/30 dark:text-teal-500">
-          {projects?.length ?? 0} Projects
-        </span>
+        <div className="flex flex-wrap items-center justify-end md:justify-between gap-3 ">
+          <span className="shrink-0 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-teal-500 dark:bg-blue-900/30 dark:text-teal-500">
+            {projects?.length ?? 0} Projects
+          </span>
+
+          <Link
+            href="/projects"
+            className="group flex w-fit items-center gap-1 text-xs font-medium text-teal-500 transition-colors hover:text-teal-600 dark:hover:text-teal-400"
+          >
+            View All
+            <ArrowUpRight
+              size={14}
+              className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            />
+          </Link>
+        </div>
       </div>
 
       {/* Project Grid */}
       {projects?.length > 0 ? (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          {projects.map((project) => (
+          {projects?.slice(0, 4).map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>

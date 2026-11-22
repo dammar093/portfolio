@@ -128,3 +128,14 @@ export const fetchBlogBySlug = async (slug: string) => {
 };
 
 
+export const fetchServices = async () => {
+  try {
+    const res = await axios.get(`${baseUrl}/api/v1/services`);
+    return res.data.data;
+  } catch (error) {
+    console.error("Failed to fetch", error);
+  }
+};
+
+
+
