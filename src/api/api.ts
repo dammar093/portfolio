@@ -1,5 +1,8 @@
 import { SeoType } from "@/generated/prisma/enums";
 import { prisma } from "@/lib/prisma";
+import axios from "axios";
+
+const baseUrl = process.env.AUTH_URL!;
 
 export const fetchPageBySlug = async (slug: string) => {
   return prisma.page.findUnique({
@@ -14,10 +17,7 @@ export const fetchPageBySlug = async (slug: string) => {
   });
 };
 
-export const fetchSeoBySlugAndType = async (
-  slug: string,
-  seoType: SeoType,
-) => {
+export const fetchSeoBySlugAndType = async (slug: string, seoType: SeoType) => {
   return prisma.seo.findFirst({
     where: {
       slug,
@@ -34,3 +34,22 @@ export const fetchSeoSettings = async () => {
     },
   });
 };
+
+export const fetchSetting = async () => {
+  try {
+    const res = await axios(`${baseUrl}/api/v1/settings`);
+    return res.data.data;
+  } catch (error) {
+    console.error("Failed to fetch", error);
+  }
+};
+
+export const fetchLanuage = async () => {
+  try {
+    const res = await axios(`${baseUrl}/api/v1/languages`);
+    return res.data.data;
+  } catch (error) {
+    console.error("Failed to fetch", error);
+  }
+};
+

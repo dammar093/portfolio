@@ -1,33 +1,34 @@
-import Image from "next/image";
-import React from "react";
+import { fetchSetting } from "@/api/api";
+import { ImageWithLoader } from "./shared/ImageWithLoader";
 
-const HeroSection = () => {
+const HeroSection = async () => {
+  const setting = await fetchSetting();
   return (
-    <section className="flex justify-between flex-wrap-reverse gap-5">
-      <div className="w-full md:w-[80%]">
-        <div className="w-ful md:w-[90%]">
-          <h1 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-gray-200">
-            Dammar Singh Rana
-          </h1>
-          <p className="mt-4 text-gray-600 dark:text-gray-400 text-justify">
-            I&apos;m a software engineer with a passion for building web
-            applications. I love to learn new technologies and improve my
-            skills.
-          </p>
-        </div>
+    <section className="w-full flex items-start gap-5">
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <h1 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-gray-200">
+          {setting?.name}
+        </h1>
+
+        <p className="mt-4 text-gray-600 dark:text-gray-400 text-justify">
+          {setting?.description}
+        </p>
       </div>
-      <div className="w-full md:w-[10%]">
-        <div className="w-26 h-26 bg-blue-500 rounded-sm overflow-hidden">
-          <Image
-            src={"/hero.png"}
+
+      {/* Logo */}
+      {setting?.logo && (
+        <div className="shrink-0 w-20 h-20 md:w-26 md:h-26 rounded-sm overflow-hidden">
+          <ImageWithLoader
+            src={setting.logo}
             className="w-full h-full object-scale-down"
-            width={100}
-            height={100}
+            width={104}
+            height={104}
             loading="lazy"
-            alt="Dammar Singh Rana"
+            alt={setting?.name || "Website logo"}
           />
         </div>
-      </div>
+      )}
     </section>
   );
 };

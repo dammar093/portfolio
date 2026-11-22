@@ -3,10 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import type { SettingState } from "../_types/setting";
 
-import {
-  fetchSetting,
-  saveSetting,
-} from "./setting-thunk";
+import { fetchPublicSetting, fetchSetting, saveSetting } from "./setting-thunk";
 
 const initialState: SettingState = {
   data: null,
@@ -47,8 +44,7 @@ const settingSlice = createSlice({
       })
       .addCase(fetchSetting.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload || "Failed to fetch setting";
+        state.error = action.payload || "Failed to fetch setting";
       });
 
     // =====================================
@@ -65,10 +61,25 @@ const settingSlice = createSlice({
       })
       .addCase(saveSetting.rejected, (state, action) => {
         state.submitting = false;
-        state.error =
-          action.payload || "Failed to save setting";
+        state.error = action.payload || "Failed to save setting";
       });
-  },
+    // =====================================
+    // FETCH PUBLIC SETTING
+    // =====================================
+    builder
+      .addCase(fetchPublicSetting.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchPublicSetting.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchPublicSetting.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch setting";
+      });
+  }
 });
 
 export const {
