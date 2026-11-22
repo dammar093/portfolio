@@ -9,8 +9,10 @@ export async function GET(
    
     const languages = await prisma.language.findMany({
       where: {
-        isActive:true,
-        
+        isActive: true,
+      },
+      orderBy: {
+        order: "asc",
       },
     });
 

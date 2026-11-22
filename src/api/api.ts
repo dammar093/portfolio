@@ -53,3 +53,14 @@ export const fetchLanuage = async () => {
   }
 };
 
+
+export const fetchExperiences = async () => {
+  try {
+    const res = await axios(`${baseUrl}/api/v1/experiences`);
+    return res.data.data;
+  } catch (error) {
+    console.error("Failed to fetch", error);
+  }
+};
+
+
