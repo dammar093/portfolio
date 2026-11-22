@@ -55,14 +55,6 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
 
         {/* Header */}
         <header className="flex flex-col gap-5">
-          <div className="flex items-center gap-3">
-            <span className="h-1 w-10 rounded-full bg-blue-500" />
-
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">
-              Project
-            </span>
-          </div>
-
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white md:text-5xl">
             {project.title}
           </h1>
