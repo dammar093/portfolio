@@ -1,4 +1,5 @@
 import {
+  baseUrl,
   fetchPageBySlug,
   fetchProjects,
   fetchSeoBySlugAndType,
@@ -6,6 +7,7 @@ import {
 import ProjectCard from "@/components/ProjectCard";
 import { JsonLd } from "@/components/shared/JsonLoad";
 import { SeoType } from "@/generated/prisma/enums";
+import { SeoItem } from "@/types/seo-type";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -62,24 +64,20 @@ export default Projects;
 
 // generateMetadata 
 export async function generateMetadata(): Promise<Metadata> {
-  const seo = await fetchSeoBySlugAndType("projects", SeoType.PAGE);
+  const seo: SeoItem = await fetchSeoBySlugAndType("projects", SeoType.PAGE);
 
   if (!seo) {
-    return {
-      title: "Blogs & Articles",
-      description: "Explore articles, tutorials, experiences, and insights.",
-    };
   }
 
   return {
-    title: seo.og_title || "Blogs & Articles",
+    title: seo.og_ttile || "Porjects & Portfolio",
     description: seo.og_description || "",
     keywords: seo.keywords
       ? seo.keywords.split(",").map((keyword: string) => keyword.trim())
       : undefined,
 
     openGraph: {
-      title: seo.og_title || "Blogs & Articles",
+      title: seo.og_ttile || "Porjects & Portfolio",
       description: seo.og_description || "",
       images: seo.og_image ? [seo.og_image] : [],
       type: "website",
@@ -87,13 +85,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
     twitter: {
       card: "summary_large_image",
-      title: seo.og_title || "Blogs & Articles",
+      title: seo.og_ttile || "Porjects & Portfolio",
       description: seo.og_description || "",
       images: seo.og_image ? [seo.og_image] : [],
     },
 
     alternates: {
-      canonical: seo.canonical_url || undefined,
+      canonical: `${baseUrl}/projects`,
     },
   };
 }

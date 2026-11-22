@@ -1,13 +1,14 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import type { Metadata } from "next";
 
 import { ImageWithLoader } from "@/components/shared/ImageWithLoader";
-import { fetchProjectBySlug, fetchSeoBySlugAndType } from "@/api/api";
-import { ProjectItem } from "@/app/admin/projects/_types/project";
+import { baseUrl, fetchProjectBySlug, fetchSeoBySlugAndType } from "@/api/api";
+import type { ProjectItem } from "@/app/admin/projects/_types/project";
 import { JsonLd } from "@/components/shared/JsonLoad";
-import type { Metadata } from "next";
 import { SeoType } from "@/generated/prisma/enums";
+import { SeoItem } from "@/types/seo-type";
 
 type ProjectDetailPageProps = {
   params: Promise<{
@@ -15,18 +16,23 @@ type ProjectDetailPageProps = {
   }>;
 };
 
+export const dynamic = "force-dynamic";
+
+
+// ======================================
+// PROJECT DETAIL PAGE
+// ======================================
+
 const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
   const { slug } = await params;
 
-  const project: ProjectItem = await fetchProjectBySlug(slug);
+  const project: ProjectItem | null = await fetchProjectBySlug(slug);
 
   if (!project) {
     notFound();
   }
 
-  const languages = (project.languages ?? []).filter(
-    (item: any) => item?.language,
-  );
+  const languages = (project.languages ?? []).filter((item) => item?.language);
 
   return (
     <main className="px-4 py-10 md:py-14">
@@ -51,6 +57,7 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
         <header className="flex flex-col gap-5">
           <div className="flex items-center gap-3">
             <span className="h-1 w-10 rounded-full bg-blue-500" />
+
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">
               Project
             </span>
@@ -62,12 +69,12 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
 
           {languages.length > 0 && (
             <ul className="flex flex-wrap gap-2">
-              {languages.map((item: any) => (
+              {languages.map((item) => (
                 <li
-                  key={item.language.id}
+                  key={item?.language?.id}
                   className="rounded-full border border-gray-200 bg-gray-100 px-3.5 py-1 text-sm font-medium text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-200"
                 >
-                  {item.language.name}
+                  {item?.language?.name}
                 </li>
               ))}
             </ul>
@@ -94,7 +101,9 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
 
           <div
             className="project-description prose prose-gray max-w-none dark:prose-invert prose-img:rounded-lg prose-a:text-blue-600"
-            dangerouslySetInnerHTML={{ __html: project.description || "" }}
+            dangerouslySetInnerHTML={{
+              __html: project.description || "",
+            }}
           />
         </section>
 
@@ -122,40 +131,71 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
 
 export default ProjectDetailPage;
 
+// ======================================
+// GENERATE DYNAMIC PROJECT SEO
+// ======================================
 
-// generateMetadata 
-export async function generateMetadata(): Promise<Metadata> {
-  const seo = await fetchSeoBySlugAndType("projects", SeoType.PROJECT);
+export async function generateMetadata({
+  params,
+}: ProjectDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+
+  const seo: SeoItem = await fetchSeoBySlugAndType(slug, SeoType.PROJECT);
 
   if (!seo) {
-    return {
-      
-    };
+    return {};
   }
 
+  const title = seo?.og_ttile;
+
+  const image = seo?.og_image;
+
+  const keywords = seo?.keywords
+    ? seo.keywords
+        .split(",")
+        .map((keyword: string) => keyword.trim())
+        .filter(Boolean)
+    : undefined;
+
+  const canonicalUrl = `${baseUrl}/projects/${slug}`;
+  const description = seo.og_description;
   return {
-    title: seo.og_title,
-    description: seo.og_description || "",
-    keywords: seo.keywords
-      ? seo.keywords.split(",").map((keyword: string) => keyword.trim())
-      : undefined,
+    title,
+    description,
+    keywords,
+
+    alternates: {
+      canonical: canonicalUrl,
+    },
 
     openGraph: {
-      title: seo.og_title,
-      description: seo.og_description || "",
-      images: seo.og_image ? [seo.og_image] : [],
-      type: "website",
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: "Portfolio",
+      type: "article",
+      images: image
+        ? [
+            {
+              url: image,
+              width: 1200,
+              height: 630,
+              alt: title,
+            },
+          ]
+        : [],
     },
 
     twitter: {
       card: "summary_large_image",
-      title: seo.og_title ,
-      description: seo.og_description || "",
-      images: seo.og_image ? [seo.og_image] : [],
+      title,
+      description,
+      images: image ? [image] : [],
     },
 
-    alternates: {
-      canonical: seo.canonical_url || undefined,
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }

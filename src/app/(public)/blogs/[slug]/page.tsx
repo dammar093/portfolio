@@ -15,6 +15,7 @@ import { ImageWithLoader } from "@/components/shared/ImageWithLoader";
 import { JsonLd } from "@/components/shared/JsonLoad";
 import type { BlogItem } from "@/app/admin/blogs/_types/blog";
 import { SeoType } from "@/generated/prisma/enums";
+import { SeoItem } from "@/types/seo-type";
 
 type BlogDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -47,31 +48,16 @@ export async function generateMetadata({
   params,
 }: BlogDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
+  const seo: SeoItem = await fetchSeoBySlugAndType(slug, SeoType.BLOG);
 
-  const [blog, seo] = await Promise.all([
-    fetchBlogBySlug(slug),
-    fetchSeoBySlugAndType(slug, SeoType.BLOG),
-  ]);
-
-  if (!blog) {
-    return {
-      title: "Blog Not Found",
-      robots: {
-        index: false,
-        follow: false,
-      },
-    };
+  if (!seo) {
+    return {};
   }
 
-  const title = seo?.og_ttile || blog.title;
-  const description =
-    seo?.og_description ||
-    `Read ${blog.title} and explore more articles and insights.`;
-
-  const image = seo?.og_image || blog.image || undefined;
-  const canonicalUrl = seo?.canonical_url
-    ? seo.canonical_url
-    : `${baseUrl}/blogs/${slug}`;
+  const title = seo?.og_ttile;
+  const description = seo?.og_description;
+  const image = seo?.og_image;
+  const canonicalUrl = `${baseUrl}/blogs/${slug}`;
 
   return {
     title,
@@ -90,15 +76,15 @@ export async function generateMetadata({
       url: canonicalUrl,
       siteName: "Portfolio",
       type: "article",
-      publishedTime: blog.createdAt,
-      modifiedTime: blog.updatedAt,
+      publishedTime: seo.createdAt,
+      modifiedTime: seo.updatedAt,
       images: image
         ? [
             {
               url: image,
               width: 1200,
               height: 630,
-              alt: blog.title,
+              alt: seo?.og_ttile,
             },
           ]
         : [],
@@ -109,11 +95,6 @@ export async function generateMetadata({
       title,
       description,
       images: image ? [image] : [],
-    },
-
-    robots: {
-      index: blog.isActive,
-      follow: true,
     },
   };
 }

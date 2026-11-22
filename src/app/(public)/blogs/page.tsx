@@ -1,15 +1,18 @@
-import { fetchBlogs, fetchPageBySlug, fetchSeoBySlugAndType } from "@/api/api";
+import {
+  baseUrl,
+  fetchBlogs,
+  fetchPageBySlug,
+  fetchSeoBySlugAndType,
+} from "@/api/api";
 import type { BlogItem } from "@/app/admin/blogs/_types/blog";
 import BlogCard from "@/components/BlogCard";
 import { JsonLd } from "@/components/shared/JsonLoad";
 import { SeoType } from "@/generated/prisma/enums";
+import { SeoItem } from "@/types/seo-type";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
-
-const SITE_URL =
-  process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
 // ======================================
 // BLOG LISTING PAGE
@@ -74,7 +77,7 @@ export default BlogsPage;
 // ======================================
 
 export async function generateMetadata(): Promise<Metadata> {
-  const seo = await fetchSeoBySlugAndType("blogs", SeoType.PAGE);
+  const seo: SeoItem = await fetchSeoBySlugAndType("blogs", SeoType.PAGE);
 
   const title = seo?.og_ttile || "Blogs & Articles";
 
@@ -91,7 +94,7 @@ export async function generateMetadata(): Promise<Metadata> {
         .filter(Boolean)
     : undefined;
 
-  const canonicalUrl = `${SITE_URL}/blogs`;
+  const canonicalUrl = `${baseUrl}/blogs`;
 
   return {
     title,
