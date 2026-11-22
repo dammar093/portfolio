@@ -6,6 +6,8 @@ import type { SeoItem } from "@/types/seo-type";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 const About = async () => {
   const page = await fetchPageBySlug("about");
 

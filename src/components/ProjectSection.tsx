@@ -21,7 +21,7 @@ const ProjectSection = async () => {
           </div>
 
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            A collection of projects I've built using modern technologies.
+            A collection of projects I&apos;ve built using modern technologies.
           </p>
         </div>
 

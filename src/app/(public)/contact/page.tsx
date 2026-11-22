@@ -20,29 +20,30 @@ import {
   MapPin,
   Phone,
   Sparkles,
-  Twitter,
   Youtube,
 } from "lucide-react";
 import { SettingItem } from "@/app/admin/site-settings/_types/setting";
+import type { LucideIcon } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 const SOCIALS = [
-  { key: "facebook", label: "Facebook", icon: Facebook },
-  { key: "instagram", label: "Instagram", icon: Instagram },
-  { key: "linkedin", label: "LinkedIn", icon: Linkedin },
-  { key: "github", label: "GitHub", icon: Github },
-  { key: "twitter", label: "Twitter", icon: Twitter },
-  { key: "youtube", label: "YouTube", icon: Youtube },
+  { key: "facebook_link", label: "Facebook", icon: Facebook },
+  { key: "instagram_link", label: "Instagram", icon: Instagram },
+  { key: "linkedin_link", label: "LinkedIn", icon: Linkedin },
+  { key: "github_link", label: "GitHub", icon: Github },
+  { key: "youtube_link", label: "YouTube", icon: Youtube },
 ] as const;
 
 const Contact = async () => {
   const [page, setting] = (await Promise.all([
     fetchPageBySlug("contact"),
     fetchSetting(),
-  ])) as [any, SettingItem | null];
+  ])) as [{ short_title: string; description: string; seo?: { schema_markup?: unknown } | null } | null, SettingItem | null];
 
   if (!page) notFound();
 
-  const s = (setting ?? {}) as Record<string, any>;
+  const s = (setting ?? {}) as Partial<SettingItem>;
   const socials = SOCIALS.filter((item) => s[item.key]);
 
   const details = [
@@ -60,7 +61,7 @@ const Contact = async () => {
     },
     s.address && { icon: MapPin, label: "Location", value: s.address },
   ].filter(Boolean) as {
-    icon: any;
+    icon: LucideIcon;
     label: string;
     value: string;
     href?: string;
@@ -169,7 +170,7 @@ const Contact = async () => {
                     Send me a message
                   </h2>
                   <p className="mt-2 text-sm leading-7 text-gray-500 dark:text-gray-400">
-                    Fill in the details below and I'll get back to you shortly.
+                    Fill in the details below and I&apos;ll get back to you shortly.
                   </p>
                 </div>
 

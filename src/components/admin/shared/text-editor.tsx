@@ -1,6 +1,6 @@
 "use client";
 
-import { Controller, Control, FieldValues, Path } from "react-hook-form";
+import { Controller, Control, FieldValues, Path, RegisterOptions } from "react-hook-form";
 import { Editor as TinymceReact } from "@tinymce/tinymce-react";
 import { useTheme } from "next-themes";
 
@@ -8,32 +8,14 @@ import { useTheme } from "next-themes";
 //   "anchor autolink charmap codesample emoticons image",
 //   "link lists media searchreplace table visualblocks wordcount",
 // ];
-import { FieldError } from "react-hook-form";
-
-export interface IRichTxtProp {
-  value: string;
-  name: string;
-  onChange?: (e: any, value: any) => void;
-  onBlur?: any;
-  disabled?: boolean;
-  setValue: any;
-  error?: FieldError;
-  imageUpload?: boolean;
-  marginTop?: string;
-  marginBottom?: string;
-  label?: string;
-  required?: boolean;
-  resError?: string;
-  onFocus?: () => void;
-}
 
 export interface ITextEditor {
   value?: string;
-  onChange?: Function;
-  plugins?: string;
+  onChange?: (content: string) => void;
+  plugins?: string | string[];
   menubar?: string;
   toolbar?: string;
-  options?: {};
+  options?: Record<string, unknown>;
 }
 
 const defaultPlugins = [
@@ -107,7 +89,7 @@ interface TextEditorProps<T extends FieldValues> extends Omit<
   label?: string;
   required?: boolean;
   xs?: number;
-  rules?: any;
+  rules?: RegisterOptions<T, Path<T>>;
 }
 
 export const TextEditor = <T extends FieldValues>({
@@ -135,14 +117,8 @@ export const TextEditor = <T extends FieldValues>({
           required: required ? `${label || name} is required` : false,
           ...rules,
         }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <>
-            <BaseTextEditor
-              value={value ?? ""}
-              onChange={onChange}
-              {...editorProps}
-            />
-          </>
+        render={({ field: { onChange, value } }) => (
+          <BaseTextEditor value={value ?? ""} onChange={onChange} {...editorProps} />
         )}
       />
     </div>

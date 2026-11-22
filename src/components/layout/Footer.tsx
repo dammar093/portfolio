@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 
 import { fetchSetting } from "@/api/api";
+import type { SettingItem } from "@/app/admin/site-settings/_types/setting";
 
 const SOCIALS = [
   { key: "github_link", label: "GitHub", icon: FaGithub },
@@ -18,7 +19,7 @@ const SOCIALS = [
 ] as const;
 
 const Footer = async () => {
-  const setting = (await fetchSetting()) as Record<string, any> | undefined;
+  const setting = (await fetchSetting()) as Partial<SettingItem> | undefined;
 
   const socials = SOCIALS.filter((item) => setting?.[item.key]);
   const name = setting?.name || "Dammar Singh Rana";

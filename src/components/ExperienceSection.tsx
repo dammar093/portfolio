@@ -4,7 +4,6 @@ import {
   BriefcaseBusiness,
   CalendarDays,
   MapPin,
-  ArrowUpRight,
 } from "lucide-react";
 import { ImageWithLoader } from "./shared/ImageWithLoader";
 

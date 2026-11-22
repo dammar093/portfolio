@@ -234,6 +234,7 @@ export async function DELETE(
 
     return success({
       message: "Testimonial deleted successfully",
+      data: null,
     });
   } catch (err) {
     console.error("DELETE TESTIMONIAL:", err);

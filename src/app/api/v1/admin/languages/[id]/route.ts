@@ -261,6 +261,7 @@ export async function DELETE(
 
     return success({
       message: "Language deleted successfully",
+      data: null,
     });
   } catch (err) {
     console.error("Delete language error:", err);

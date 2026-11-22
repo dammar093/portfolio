@@ -5,7 +5,6 @@ import {
   Code,
   FileText,
   FolderKanban,
-  Globe,
   MessageSquare,
   Newspaper,
   Settings,

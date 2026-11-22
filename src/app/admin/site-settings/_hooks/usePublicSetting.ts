@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelectore";
@@ -20,8 +20,8 @@ export const usePublicSettings = () => {
   } = useAppSelector((state) => state.setting);
 
   useEffect(() => {
-    dispatch(fetchPublicSetting())
-  }, []);
+    dispatch(fetchPublicSetting());
+  }, [dispatch]);
 
   return {
     setting: data,

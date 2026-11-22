@@ -10,6 +10,9 @@ import { SeoType } from "@/generated/prisma/enums";
 import { SeoItem } from "@/types/seo-type";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import type { ProjectItem } from "@/app/admin/projects/_types/project";
+
+export const dynamic = "force-dynamic";
 
 const Projects = async () => {
   const [page, projects] = await Promise.all([
@@ -38,7 +41,7 @@ const Projects = async () => {
 
         {projects.length > 0 ? (
           <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-5 md:grid-cols-2">
-            {projects.map((project: any) => (
+            {projects.map((project: ProjectItem) => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </div>
