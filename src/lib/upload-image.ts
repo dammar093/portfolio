@@ -47,18 +47,20 @@ export async function uploadImage(file: File, folder: string) {
       );
     }
 
-    const blob = await put(
-      path.posix.join(safeDir, fileName),
+    const pathname = path.posix.join(safeDir, fileName);
+
+    await put(
+      pathname,
       file,
       {
-        access: "public",
+        access: "private",
         addRandomSuffix: false,
         contentType: file.type || undefined,
       },
     );
 
     return {
-      path: blob.url,
+      path: `/api/blob?pathname=${encodeURIComponent(pathname)}`,
       size: file.size,
     };
   }

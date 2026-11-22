@@ -13,8 +13,11 @@ export function withAbsoluteAssetUrls<T>(data: T, requestUrl: string): T {
       return value;
     }
 
-    // Convert relative upload URLs to absolute URLs
-    if (typeof value === "string" && value.startsWith("/uploads/")) {
+    // Convert relative asset URLs to absolute URLs for API and metadata output.
+    if (
+      typeof value === "string" &&
+      (value.startsWith("/uploads/") || value.startsWith("/api/blob?pathname="))
+    ) {
       return new URL(value, baseUrl).toString();
     }
 

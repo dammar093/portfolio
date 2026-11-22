@@ -19,6 +19,12 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "www.dammarrana.com.np",
+        port: "",
+        pathname: "/api/blob",
+      },
+      {
+        protocol: "https",
         hostname: "*.public.blob.vercel-storage.com",
         port: "",
         pathname: "/**",
