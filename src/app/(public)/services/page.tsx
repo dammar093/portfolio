@@ -8,8 +8,8 @@ import { ServiceItem } from "@/app/admin/services/_types/service";
 import ServiceCard from "@/components/ServcieCard";
 import { JsonLd } from "@/components/shared/JsonLoad";
 import { SeoType } from "@/generated/prisma/enums";
-import { SeoItem } from "@/types/seo-type";
-import { Metadata } from "next";
+import type { SeoItem } from "@/types/seo-type";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -67,26 +67,40 @@ const ServicesPage = async () => {
 export default ServicesPage;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const seo: SeoItem = await fetchSeoBySlugAndType("services", SeoType.PAGE);
+  const seo: SeoItem | null = await fetchSeoBySlugAndType(
+    "services",
+    SeoType.PAGE,
+  );
 
-  if (!seo) {
-  }
-  const title = seo.og_ttile || "Services";
-  const description = seo.og_description || "";
-  const keywords = seo.keywords
-    ? seo.keywords.split(",").map((keyword: string) => keyword.trim())
+  const title = seo?.og_ttile || "Services";
+  const description =
+    seo?.og_description ||
+    "Explore services and solutions for your next project.";
+  const keywords = seo?.keywords
+    ? seo.keywords
+        .split(",")
+        .map((keyword) => keyword.trim())
+        .filter(Boolean)
     : undefined;
-  const image = seo.og_image || "";
+  const image = seo?.og_image || undefined;
+  const canonicalUrl = `${baseUrl}/services`;
 
   return {
     title,
     description,
     keywords,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
-      images: image ? [image] : [],
+      url: canonicalUrl,
+      siteName: "Portfolio",
       type: "website",
+      images: image
+        ? [{ url: image, width: 1200, height: 630, alt: title }]
+        : [],
     },
 
     twitter: {
@@ -96,8 +110,6 @@ export async function generateMetadata(): Promise<Metadata> {
       images: image ? [image] : [],
     },
 
-    alternates: {
-      canonical: `${baseUrl}/services`,
-    },
+    robots: { index: true, follow: true },
   };
 }
