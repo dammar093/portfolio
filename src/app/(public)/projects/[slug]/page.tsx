@@ -35,7 +35,7 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
   const languages = (project.languages ?? []).filter((item) => item?.language);
 
   return (
-    <main className="px-4 py-10 md:py-14">
+    <main className="py-10 md:py-14">
       {project.seo?.schema_markup && (
         <JsonLd data={project.seo.schema_markup} />
       )}

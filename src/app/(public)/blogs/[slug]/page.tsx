@@ -115,7 +115,7 @@ const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {
   const readingTime = getReadingTime(blog.description);
 
   return (
-    <main className="px-4 py-10 md:py-14">
+    <main className="py-10 md:py-14">
       {blog.seo?.schema_markup && <JsonLd data={blog.seo.schema_markup} />}
 
       <article className="mx-auto flex w-full max-w-4xl flex-col gap-8">
