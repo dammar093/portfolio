@@ -29,6 +29,9 @@ const Projects = async () => {
       <section className="flex h-full w-full flex-col gap-5">
         <div className="mx-auto w-full max-w-5xl space-y-8 py-8">
           <header className="space-y-4 border-b border-gray-200 pb-6 dark:border-gray-800">
+            <p className="text-sm font-semibold uppercase tracking-widest text-teal-500 dark:text-indigo-400">
+              {page.title}
+            </p>
             <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
               {page.short_title}
             </h1>
@@ -57,7 +60,7 @@ const Projects = async () => {
 
 export default Projects;
 
-// generateMetadata 
+// generateMetadata
 export async function generateMetadata(): Promise<Metadata> {
   const seo: SeoItem = await fetchSeoBySlugAndType("projects", SeoType.PAGE);
 
