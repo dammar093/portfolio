@@ -106,7 +106,7 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
               href={project.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
+              className="group flex items-center gap-2 rounded-full bg-teal-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-teal-500"
             >
               Visit Live Project
               <ArrowUpRight
