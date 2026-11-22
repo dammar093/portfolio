@@ -9,10 +9,10 @@ const HeroSection = async () => {
     <section className="w-full flex flex-col gap-5">
       {/* Logo */}
       {setting?.logo && (
-        <div className="shrink-0 w-24 h-24 md:w-30 md:h-30 rounded-sm overflow-hidden">
+        <div className="shrink-0 w-24 h-24 md:w-30 md:h-30 rounded-full overflow-hidden p-1">
           <ImageWithLoader
             src={setting.logo}
-            className="w-full h-full object-scale-down"
+            className="w-full h-full object-cover"
             width={104}
             height={104}
             loading="lazy"
