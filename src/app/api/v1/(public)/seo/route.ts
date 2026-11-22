@@ -9,10 +9,10 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
-    const seo = await prisma.seo.findFirst({
-        where: {
-        setting_id:"550e8400-e29b-41d4-a716-446655440000"
-    }
+    const seo = await prisma.seo.findUnique({
+      where: {
+        setting_id: "550e8400-e29b-41d4-a716-446655440000",
+      },
     });
 
     if (!seo) {
