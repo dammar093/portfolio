@@ -1,5 +1,4 @@
 import { SeoType } from "@/generated/prisma/enums";
-import { prisma } from "@/lib/prisma";
 import axios from "axios";
 export const dynamic = "force-dynamic";
 
@@ -38,14 +37,31 @@ export const fetchSeoBySlugAndType = async (slug: string, seoType: SeoType) => {
 };
 
 
+
 export const fetchSeoSettings = async () => {
-  return prisma.seo.findFirst({
-    where: {
-      slug: "global",
-      seo_type: SeoType.SETTING,
-    },
-  });
+  try {
+    const res = await axios.get(`${baseUrl}/api/v1/seo`, {
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    });
+
+    return res.data.data ?? null;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("SEO FETCH ERROR:", {
+        status: error.response?.status,
+        message: error.response?.data?.message || error.message,
+        url: error.config?.url,
+      });
+    } else {
+      console.error("SEO FETCH ERROR:", error);
+    }
+
+    return null;
+  }
 };
+
 
 export const fetchSetting = async () => {
   try {
