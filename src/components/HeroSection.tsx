@@ -22,7 +22,7 @@ const HeroSection = async () => {
       )}
       {/* Content */}
       <div className="flex-1 min-w-0 flex flex-col gap-4">
-        <h1 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-gray-200">
+        <h1 className="font-mono text-2xl md:text-4xl font-bold text-gray-800 dark:text-gray-200">
           {setting?.name}
         </h1>
         <p className=" text-teal-500 dark:text-teal-500 text-justify">
