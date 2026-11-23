@@ -19,7 +19,6 @@ import {
   Mail,
   MapPin,
   Phone,
-  Sparkles,
   Youtube,
 } from "lucide-react";
 import { SettingItem } from "@/app/admin/site-settings/_types/setting";
