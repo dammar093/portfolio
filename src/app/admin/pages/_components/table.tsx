@@ -1,6 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Table,
   TableBody,
@@ -16,7 +27,7 @@ import {
 } from "@/components/ui/tooltip";
 import Paginations from "@/components/admin/shared/Paginations";
 import { SearchCreate } from "@/components/admin/shared/Search-carate";
-import { Edit, FileSearch } from "lucide-react";
+import { Edit, FileSearch, LoaderCircle, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { memo } from "react";
@@ -29,11 +40,13 @@ import { TableSkeleton } from "./loading";
 interface PageDataTableProps {
   pages: PageItem[];
   meta: PaginationMeta;
+  onDelete: (page: PageItem) => void;
 }
 
 const PageDataTable = memo(function PageDataTable({
   pages,
   meta,
+  onDelete,
 }: PageDataTableProps) {
   return (
     <Table className="w-full border">
@@ -105,6 +118,22 @@ const PageDataTable = memo(function PageDataTable({
                   <TooltipContent>Page SEO</TooltipContent>
                 </Tooltip>
 
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-500"
+                      aria-label={`Delete ${page.title}`}
+                      onClick={() => onDelete(page)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete Page</TooltipContent>
+                </Tooltip>
+
               </div>
             </TableCell>
           </TableRow>
@@ -119,6 +148,7 @@ interface PageTableResultsProps {
   meta: PaginationMeta | null;
   loading: boolean;
   error: string | null;
+  onDelete: (page: PageItem) => void;
 }
 
 const PageTableResults = memo(function PageTableResults({
@@ -126,6 +156,7 @@ const PageTableResults = memo(function PageTableResults({
   meta,
   loading,
   error,
+  onDelete,
 }: PageTableResultsProps) {
   if (error) return <Error error={error} />;
   if (loading) return <TableSkeleton />;
@@ -140,7 +171,7 @@ const PageTableResults = memo(function PageTableResults({
 
   return (
     <>
-      <PageDataTable pages={pages} meta={meta} />
+      <PageDataTable pages={pages} meta={meta} onDelete={onDelete} />
       <Paginations
         page={meta.page}
         limit={meta.limit}
@@ -160,7 +191,23 @@ export function PagesTable() {
     meta,
     searchInput,
     setSearch,
+    handleDeletePage,
   } = usePages();
+  const [selectedPage, setSelectedPage] = useState<PageItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const confirmDelete = async () => {
+    if (!selectedPage || isDeleting) return;
+    setIsDeleting(true);
+    try {
+      await handleDeletePage(selectedPage.id);
+      setSelectedPage(null);
+    } catch (error) {
+      console.error("Failed to delete page:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="relative flex w-full flex-col gap-5 overflow-x-auto px-1 py-5">
@@ -180,7 +227,39 @@ export function PagesTable() {
         meta={meta}
         loading={listLoading}
         error={listError}
+        onDelete={setSelectedPage}
       />
+
+      <AlertDialog
+        open={Boolean(selectedPage)}
+        onOpenChange={(open) => {
+          if (!open && !isDeleting) setSelectedPage(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete page?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Delete <span className="font-semibold text-foreground">{selectedPage?.title}</span>?
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              className="bg-red-600 text-white hover:bg-red-700"
+              onClick={(event) => {
+                event.preventDefault();
+                void confirmDelete();
+              }}
+            >
+              {isDeleting ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+              {isDeleting ? "Deleting…" : "Delete page"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

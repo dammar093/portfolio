@@ -1,11 +1,8 @@
 
 "use client";
 
-import { useEffect, useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -19,13 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import {
-  settingSchema,
-  settingDefaultValues,
-  type SettingFormInput,
-} from "../_schema/setting-schema";
-
-import { useSettings } from "../_hooks/useSetting";
+import { useSetting } from "../_hooks/useSetting";
 import { SettingFormSkeleton } from "./form-skeleton";
 
 import {
@@ -45,98 +36,14 @@ export default function SettingForm() {
     setting,
     loading,
     submitting,
-    save,
-  } = useSettings();
-
-  const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-
-  const {
     register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<SettingFormInput>({
-    resolver: zodResolver(settingSchema),
-    defaultValues: settingDefaultValues,
-  });
-
-  // =====================================
-  // SET FORM DATA
-  // =====================================
-  useEffect(() => {
-    if (!setting) return;
-
-    reset({
-      name: setting.name ?? "",
-      email: setting.email ?? "",
-      phone: setting.phone ?? "",
-      description: setting.description ?? "",
-      address: setting.address ?? "",
-      g_tag: setting.g_tag ?? "",
-      linkedin_link: setting.linkedin_link ?? "",
-      github_link: setting.github_link ?? "",
-      youtube_link: setting.youtube_link ?? "",
-      facebook_link: setting.facebook_link ?? "",
-      instagram_link: setting.instagram_link ?? "",
-    });
-
-    setLogoPreview(setting.logo ?? null);
-  }, [setting, reset]);
-
-  // =====================================
-  // LOGO UPLOAD
-  // =====================================
-  const handleLogoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select a valid image");
-      event.target.value = "";
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Logo must be smaller than 5MB");
-      event.target.value = "";
-      return;
-    }
-
-    setLogoFile(file);
-
-    const previewUrl = URL.createObjectURL(file);
-    setLogoPreview(previewUrl);
-  };
-
-  // =====================================
-  // SUBMIT FORM
-  // =====================================
-  const onSubmit = async (values: SettingFormInput) => {
-    try {
-      const formData = new FormData();
-
-      Object.entries(values).forEach(([key, value]) => {
-        formData.append(key, value ?? "");
-      });
-
-      if (logoFile) {
-        formData.append("logo", logoFile);
-      }
-
-      const updatedSetting = await save(formData);
-
-      setLogoFile(null);
-      setLogoPreview(updatedSetting.logo ?? null);
-
-      toast.success("Settings saved successfully");
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to save settings",
-      );
-    }
-  };
+    errors,
+    logoFile,
+    logoPreview,
+    handleLogoChange,
+    onSubmit,
+    resetForm,
+  } = useSetting();
 
   // =====================================
   // SEO REDIRECT
@@ -170,7 +77,7 @@ export default function SettingForm() {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={onSubmit}
       className="mx-auto w-full space-y-6"
     >
       {/* HEADER */}
@@ -465,30 +372,7 @@ export default function SettingForm() {
         <Button
           type="button"
           variant="outline"
-          onClick={() => {
-            if (setting) {
-              reset({
-                name: setting.name ?? "",
-                email: setting.email ?? "",
-                phone: setting.phone ?? "",
-                description: setting.description ?? "",
-                address: setting.address ?? "",
-                g_tag: setting.g_tag ?? "",
-                linkedin_link: setting.linkedin_link ?? "",
-                github_link: setting.github_link ?? "",
-                youtube_link: setting.youtube_link ?? "",
-                facebook_link: setting.facebook_link ?? "",
-                instagram_link: setting.instagram_link ?? "",
-              });
-
-              setLogoFile(null);
-              setLogoPreview(setting.logo ?? null);
-            } else {
-              reset(settingDefaultValues);
-              setLogoFile(null);
-              setLogoPreview(null);
-            }
-          }}
+          onClick={resetForm}
         >
           Reset
         </Button>

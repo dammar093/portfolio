@@ -1,6 +1,7 @@
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toast } from "sonner";
 import type { SettingItem } from "../_types/setting";
 
 
@@ -18,11 +19,12 @@ export const fetchSetting = createAsyncThunk<
     return response.data.data as SettingItem | null;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch setting",
-      );
+      const message = error.response?.data?.message || "Failed to fetch setting";
+      toast.error(message);
+      return rejectWithValue(message);
     }
 
+    toast.error("Something went wrong while loading settings");
     return rejectWithValue("Something went wrong");
   }
 });
@@ -38,14 +40,17 @@ export const saveSetting = createAsyncThunk<
   try {
     const response = await axios.post("/api/v1/admin/settings", formData);
 
+    toast.success(response.data.message || "Settings saved successfully");
+
     return response.data.data as SettingItem;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to save setting",
-      );
+      const message = error.response?.data?.message || "Failed to save setting";
+      toast.error(message);
+      return rejectWithValue(message);
     }
 
+    toast.error("Something went wrong");
     return rejectWithValue("Something went wrong");
   }
 });

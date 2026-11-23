@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelectore";
@@ -109,11 +108,8 @@ export function useFAQForm() {
           })
         ).unwrap();
 
-        toast.success("FAQ updated successfully");
       } else {
         await dispatch(createFAQ(payload)).unwrap();
-
-        toast.success("FAQ created successfully");
       }
 
       router.push("/admin/faqs");

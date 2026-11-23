@@ -20,4 +20,7 @@ export interface SettingState {
   loading: boolean;
   submitting: boolean;
   error: string | null;
+  publicData: SettingItem | null;
+  publicLoading: boolean;
+  publicError: string | null;
 }

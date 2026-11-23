@@ -10,6 +10,9 @@ const initialState: SettingState = {
   loading: false,
   submitting: false,
   error: null,
+  publicData: null,
+  publicLoading: false,
+  publicError: null,
 };
 
 const settingSlice = createSlice({
@@ -26,6 +29,9 @@ const settingSlice = createSlice({
       state.loading = false;
       state.submitting = false;
       state.error = null;
+      state.publicData = null;
+      state.publicLoading = false;
+      state.publicError = null;
     },
   },
 
@@ -41,6 +47,7 @@ const settingSlice = createSlice({
       .addCase(fetchSetting.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
+        state.error = null;
       })
       .addCase(fetchSetting.rejected, (state, action) => {
         state.loading = false;
@@ -58,6 +65,7 @@ const settingSlice = createSlice({
       .addCase(saveSetting.fulfilled, (state, action) => {
         state.submitting = false;
         state.data = action.payload;
+        state.error = null;
       })
       .addCase(saveSetting.rejected, (state, action) => {
         state.submitting = false;
@@ -68,16 +76,17 @@ const settingSlice = createSlice({
     // =====================================
     builder
       .addCase(fetchPublicSetting.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.publicLoading = true;
+        state.publicError = null;
       })
       .addCase(fetchPublicSetting.fulfilled, (state, action) => {
-        state.loading = false;
-        state.data = action.payload;
+        state.publicLoading = false;
+        state.publicData = action.payload;
+        state.publicError = null;
       })
       .addCase(fetchPublicSetting.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "Failed to fetch setting";
+        state.publicLoading = false;
+        state.publicError = action.payload || "Failed to fetch setting";
       });
   }
 });

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { fetchPage, fetchPages, toggleStatusPage } from "../_redux/page-thunk";
+import { deletePage, fetchPage, fetchPages, toggleStatusPage } from "../_redux/page-thunk";
 import { AppDispatch } from "@/redux/store";
 import { useAppSelector } from "@/hooks/useAppSelectore";
 
@@ -96,6 +96,25 @@ export function usePages(id?: string) {
     dispatch(toggleStatusPage(id))
   }, [dispatch])
 
+  const handleDeletePage = useCallback(async (id: string) => {
+    await dispatch(deletePage(id)).unwrap();
+
+    if (data.length === 1 && page > 1) {
+      const previousPage = page - 1;
+      setPage(previousPage);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", String(previousPage));
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      return;
+    }
+
+    await dispatch(fetchPages({
+      page,
+      limit,
+      ...(search.trim() ? { search } : {}),
+    })).unwrap();
+  }, [dispatch, data.length, page, searchParams, router, pathname, limit, search]);
+
   return {
     pages: data,
     usedSlugs,
@@ -116,6 +135,7 @@ export function usePages(id?: string) {
     setLimit,
     setSearch: updateSearch,
     currentPage,
-    handleToggleStatus
+    handleToggleStatus,
+    handleDeletePage
   };
 }

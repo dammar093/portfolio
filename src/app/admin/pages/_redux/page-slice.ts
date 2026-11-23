@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createPage, fetchPage, fetchPages, toggleStatusPage, updatePage } from "../_redux/page-thunk";
+import { createPage, deletePage, fetchPage, fetchPages, toggleStatusPage, updatePage } from "../_redux/page-thunk";
 import type { PageItem, PaginationMeta } from "../_types/page";
 
 interface PagesState {
@@ -105,6 +105,17 @@ const pagesSlice = createSlice({
       .addCase(updatePage.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Something went wrong";
+      })
+      .addCase(deletePage.fulfilled, (state, action) => {
+        const deletedPage = state.data.find((page) => page.id === action.payload);
+        state.data = state.data.filter((page) => page.id !== action.payload);
+        if (deletedPage) {
+          state.usedSlugs = state.usedSlugs.filter((slug) => slug !== deletedPage.slug);
+          if (state.meta) {
+            state.meta.total = Math.max(0, state.meta.total - 1);
+            state.meta.totalPages = Math.max(1, Math.ceil(state.meta.total / state.meta.limit));
+          }
+        }
       })
       // builder for toggle status of page
       .addCase(toggleStatusPage.pending, (state) => {

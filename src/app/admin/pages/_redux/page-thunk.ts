@@ -137,6 +137,24 @@ export const updatePage = createAsyncThunk<
   }
 });
 
+export const deletePage = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("pages/deletePage", async (id, { rejectWithValue }) => {
+  try {
+    const response = await axios.delete<PageResponse>(`/api/v1/admin/pages/${id}`);
+    toast.success(response.data.message || "Page deleted successfully");
+    return id;
+  } catch (err) {
+    const message = axios.isAxiosError(err)
+      ? err.response?.data?.message || "Failed to delete page"
+      : "Network error";
+    toast.error(message);
+    return rejectWithValue(message);
+  }
+});
+
 
 export const toggleStatusPage = createAsyncThunk<
   PageItem,

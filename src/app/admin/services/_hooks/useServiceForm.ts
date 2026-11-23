@@ -170,11 +170,8 @@ export function useServiceForm() {
           })
         ).unwrap();
 
-        toast.success("Service updated successfully");
       } else {
         await dispatch(createService(payload)).unwrap();
-
-        toast.success("Service created successfully");
       }
 
       router.push("/admin/services");

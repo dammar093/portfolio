@@ -181,11 +181,8 @@ export function useTestimonialForm() {
           })
         ).unwrap();
 
-        toast.success("Testimonial updated successfully");
       } else {
         await dispatch(createTestimonial(payload)).unwrap();
-
-        toast.success("Testimonial created successfully");
       }
 
       router.push("/admin/testimonials");
