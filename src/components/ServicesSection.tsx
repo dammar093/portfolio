@@ -48,7 +48,7 @@ const ServiceSection = async () => {
       {/* Service Grid */}
       {count > 0 ? (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          {services.map((service) => (
+          {services?.slice(0, 4).map((service) => (
             <ServiceCard key={service.id} service={service} />
           ))}
         </div>
