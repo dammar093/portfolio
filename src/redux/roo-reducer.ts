@@ -11,6 +11,8 @@ import blogReducer from "@/app/admin/blogs/_redux/blog-slice";
 import projectReducer from "@/app/admin/projects/_redux/project-slice";
 import contactReducer from "@/app/admin/contacts/_redux/contact-slice";
 import settingReducer from "@/app/admin/site-settings/_redux/setting-slice";
+import profileReducer from "@/app/admin/profile/_redux/profile-slice";
+import passwordResetReducer from "@/app/(auth)/forgot-password/_redux/forgot-password-slice";
 
 
 
@@ -33,5 +35,7 @@ export const rootReducer = combineReducers({
   contacts: contactReducer,
   seo: seoReducer,
   setting: settingReducer,
+  profile: profileReducer,
+  passwordReset: passwordResetReducer,
 });
 

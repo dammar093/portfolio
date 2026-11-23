@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { ZodError } from "zod";
+import { useProfileSettings } from "@/app/admin/profile/_hooks/useProfileSettings";
 
 function PasswordInput(props: React.ComponentProps<typeof Input>) {
   const [visible, setVisible] = useState(false);
@@ -29,9 +31,9 @@ export function AccountSettings({ name: initialName, email }: { name: string; em
   const [code, setCode] = useState("");
   const [emailPending, setEmailPending] = useState(false);
   const [resendSeconds, setResendSeconds] = useState(0);
-  const [emailMessage, setEmailMessage] = useState("");
-  const [message, setMessage] = useState("");
-  const [busy, setBusy] = useState(false);
+  const { submitting, requestEmailChange, updateProfile, verifyEmailChange, changePassword } = useProfileSettings();
+
+  useEffect(() => setName(initialName), [initialName]);
 
   useEffect(() => {
     if (!emailPending) return;
@@ -39,67 +41,56 @@ export function AccountSettings({ name: initialName, email }: { name: string; em
     return () => clearInterval(interval);
   }, [emailPending]);
 
-  async function resendEmailCode() {
-    setBusy(true);
-    setMessage("");
+  async function runAction(action: () => Promise<unknown>) {
     try {
-      const response = await fetch("/api/v1/auth/change-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newEmail }),
-      });
-      const result = await response.json();
-      setMessage(result.message || "Request failed");
-      if (response.ok) {
-        setCode("");
-        setResendSeconds(300);
-        toast.success(result.message || "Verification code sent");
-      } else {
-        toast.error(result.message || "Could not send a new code");
-      }
-    } catch {
-      setMessage("Could not send a new code. Please try again.");
-      toast.error("Could not send a new code. Please try again.");
-    } finally {
-      setBusy(false);
+      await action();
+      return true;
+    } catch (error) {
+      if (error instanceof ZodError) toast.error(error.issues[0]?.message || "Check the form fields");
+      return false;
     }
   }
 
-  async function submit(
-    event: FormEvent,
-    url: string,
-    method: string,
-    data: object,
-    onSuccess?: (form: HTMLFormElement) => void | Promise<void>,
-  ) {
-    const form = event.currentTarget as HTMLFormElement;
-    event.preventDefault();
-    setBusy(true);
-    setMessage("");
-    if (url === "/api/v1/auth/change-email") setEmailMessage("");
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      const result = await response.json();
-      if (response.ok) {
-        setMessage("");
-        toast.success(result.message || "Updated successfully");
-        await onSuccess?.(form);
-      } else {
-        setMessage(result.message || "Request failed");
-        if (url === "/api/v1/auth/change-email")
-          setEmailMessage(result.message || "Could not update email");
-        toast.error(result.message || "Request failed");
-      }
-    } catch {
-      setMessage("Request failed. Please try again.");
-      toast.error("Request failed. Please try again.");
-    } finally {
-      setBusy(false);
+  async function resendEmailCode() {
+    const sent = await runAction(() => requestEmailChange({ newEmail }));
+    if (sent) {
+      setCode("");
+      setResendSeconds(300);
     }
+  }
+
+  async function handleProfileSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await runAction(() => updateProfile({ name }));
+  }
+
+  async function handleEmailSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const sent = await runAction(() => requestEmailChange({ newEmail }));
+    if (sent) {
+      setEmailPending(true);
+      setResendSeconds(300);
+      setCode("");
+    }
+  }
+
+  async function handleVerifySubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const verified = await runAction(() => verifyEmailChange({ code }));
+    if (verified) {
+      setCode("");
+      setNewEmail("");
+      setEmailPending(false);
+      setResendSeconds(0);
+      await signOut({ callbackUrl: "/login" });
+    }
+  }
+
+  async function handlePasswordSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
+    if (await runAction(() => changePassword(data))) form.reset();
   }
 
   return (
@@ -110,18 +101,11 @@ export function AccountSettings({ name: initialName, email }: { name: string; em
           Manage your profile and sign-in details.
         </p>
       </div>
-      {message && (
-        <p role="status" className="rounded-md border bg-muted p-3 text-sm">
-          {message}
-        </p>
-      )}
       <section className="space-y-4 rounded-xl border bg-card p-6">
         <h2 className="text-xl font-semibold">Profile details</h2>
         <form
           className="space-y-3"
-          onSubmit={(event) =>
-            submit(event, "/api/v1/auth/profile", "PATCH", { name })
-          }
+          onSubmit={handleProfileSubmit}
         >
           <label className="block space-y-1 text-sm">
             Display name
@@ -133,7 +117,7 @@ export function AccountSettings({ name: initialName, email }: { name: string; em
               required
             />
           </label>
-          <Button disabled={busy}>Save name</Button>
+          <Button disabled={submitting}>Save name</Button>
         </form>
         <div className="space-y-1 text-sm">
           <p className="font-medium">Current email</p>
@@ -142,18 +126,7 @@ export function AccountSettings({ name: initialName, email }: { name: string; em
         {!emailPending ? (
           <form
             className="space-y-3"
-            onSubmit={(event) =>
-              submit(
-                event,
-                "/api/v1/auth/change-email",
-                "POST",
-                { newEmail },
-                () => {
-                  setEmailPending(true);
-                  setResendSeconds(300);
-                },
-              )
-            }
+            onSubmit={handleEmailSubmit}
           >
             <label className="block space-y-1 text-sm">
               New email address
@@ -164,33 +137,14 @@ export function AccountSettings({ name: initialName, email }: { name: string; em
                 required
               />
             </label>
-            {emailMessage && (
-              <p role="alert" className="text-sm text-destructive">
-                {emailMessage}
-              </p>
-            )}
-            <Button variant="outline" disabled={busy}>
+            <Button variant="outline" disabled={submitting}>
               Send verification code
             </Button>
           </form>
         ) : (
           <form
             className="space-y-3"
-            onSubmit={(event) =>
-              submit(
-                event,
-                "/api/v1/auth/change-email/verify",
-                "POST",
-                { code },
-                async () => {
-                  setCode("");
-                  setNewEmail("");
-                  setEmailPending(false);
-                  setResendSeconds(0);
-                  await signOut({ callbackUrl: "/login" });
-                },
-              )
-            }
+            onSubmit={handleVerifySubmit}
           >
             <p className="text-sm text-muted-foreground">
               Enter the six digit code sent to {newEmail}.
@@ -210,14 +164,14 @@ export function AccountSettings({ name: initialName, email }: { name: string; em
               />
             </label>
             <div className="flex flex-wrap items-center gap-3">
-              <Button disabled={busy || code.length !== 6}>
+              <Button disabled={submitting || code.length !== 6}>
                 Verify and update email
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 className="border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-                disabled={busy || resendSeconds > 0}
+                disabled={submitting || resendSeconds > 0}
                 onClick={resendEmailCode}
               >
                 {resendSeconds > 0
@@ -227,7 +181,10 @@ export function AccountSettings({ name: initialName, email }: { name: string; em
               <Button
                 type="button"
                 variant="ghost"
-                onClick={() => setEmailPending(false)}
+                onClick={() => {
+                  setEmailPending(false);
+                  setCode("");
+                }}
               >
                 Use a different email
               </Button>
@@ -239,15 +196,7 @@ export function AccountSettings({ name: initialName, email }: { name: string; em
         <h2 className="text-xl font-semibold">Change password</h2>
         <form
           className="space-y-3"
-          onSubmit={(event) =>
-            submit(
-              event,
-              "/api/v1/auth/change-password",
-              "PATCH",
-              Object.fromEntries(new FormData(event.currentTarget)),
-              (form) => form.reset(),
-            )
-          }
+          onSubmit={handlePasswordSubmit}
         >
           <label className="block space-y-1 text-sm">
             Current password
@@ -275,7 +224,7 @@ export function AccountSettings({ name: initialName, email }: { name: string; em
               required
             />
           </label>
-          <Button className="font-semibold" disabled={busy} variant={"default"}>
+          <Button className="font-semibold" disabled={submitting} variant={"default"}>
             Update password
           </Button>
         </form>
