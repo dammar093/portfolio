@@ -52,7 +52,7 @@ const SkillSection = async () => {
             <Code2 className="h-6 w-6 text-teal-500 dark:text-teal-500" />
 
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 md:text-2xl">
-              Skills & Technologies
+              Skills
             </h2>
           </div>
 

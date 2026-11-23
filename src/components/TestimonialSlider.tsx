@@ -64,7 +64,7 @@ const Person = ({ item, size }: { item: TestimonialItem; size?: number }) => (
       <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
         {item.name}
       </p>
-      <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+      <p className="break-words text-xs text-gray-500 dark:text-gray-400">
         {item.position}
         {item.company ? ` at ${item.company}` : ""}
       </p>

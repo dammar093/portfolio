@@ -8,6 +8,14 @@ export const pages = [
   "contact",
 ] as const;
 
+export const pageOptions = [
+  { title: "Our Projects", slug: "projects" },
+  { title: "Blogs", slug: "blogs" },
+  { title: "Our Services", slug: "services" },
+  { title: "About Us", slug: "about" },
+  { title: "Contact Us", slug: "contact" },
+] as const;
+
 const pageFieldsSchema = z.object({
   title: z.string().min(1, "Title is required"),
   short_title: z.string().min(1, "Short title is required"),

@@ -39,7 +39,7 @@ const Contact = async () => {
   const [page, setting] = (await Promise.all([
     fetchPageBySlug("contact"),
     fetchSetting(),
-  ])) as [{ short_title: string; description: string; seo?: { schema_markup?: unknown } | null } | null, SettingItem | null];
+  ]))
 
   if (!page) notFound();
 
@@ -74,12 +74,10 @@ const Contact = async () => {
       <main className="py-10 md:py-14">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-12">
           <div className="mx-auto w-full max-w-5xl space-y-8 py-8">
-            {/* Heading */}
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-teal-500/20 bg-teal-500/10 px-4 py-2 text-xs font-semibold tracking-wider text-teal-600 dark:text-teal-400">
-              <Sparkles size={14} />
-              GET IN TOUCH
-            </span>
             <header className="space-y-4 border-b border-gray-200 pb-6 dark:border-gray-800">
+              <p className="text-sm font-semibold uppercase tracking-widest text-teal-500 dark:text-teal-500">
+                {page.title}
+              </p>
               <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
                 {page.short_title}
               </h1>

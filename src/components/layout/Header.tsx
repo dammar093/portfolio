@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
-import { pages } from "@/app/admin/pages/_schema/page-schema";
+import { pageOptions } from "@/app/admin/pages/_schema/page-schema";
 import { ModeToggle } from "../theme/Mode";
 import Container from "./Container";
 
@@ -21,7 +21,7 @@ const Header = () => {
 
   const links = [
     { href: "/", label: "Home" },
-    ...pages.map((page) => ({ href: `/${page}`, label: page })),
+    ...pageOptions.map(({ slug, title }) => ({ href: `/${slug}`, label: title })),
   ];
 
   // Close the menu when the route changes
@@ -91,7 +91,7 @@ const Header = () => {
         {open && (
           <nav
             id="mobile-menu"
-            className="absolute inset-x-0 top-full border-b border-gray-200 bg-white/95 p-4 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-black/90 md:hidden"
+            className="absolute inset-x-0 top-full border-b border-gray-200 bg-white p-4 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-[#18181B] md:hidden"
           >
             <ul className="flex flex-col gap-1">
               {links.map(({ href, label }) => (
