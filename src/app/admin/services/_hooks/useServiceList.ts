@@ -102,7 +102,7 @@ export function useServices(id?: string) {
       setSearch(urlSearch);
       setSearchInput(urlSearch);
     }
-  }, [searchParams]);
+  }, [searchParams, page, limit, search]);
 
   // ==============================
   // CLEAR DEBOUNCE ON UNMOUNT

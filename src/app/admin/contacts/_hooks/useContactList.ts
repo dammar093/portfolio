@@ -120,7 +120,7 @@ export function useContacts(id?: string) {
       setIsSeen(urlIsSeen);
       setPage(1);
     }
-  }, [searchParams,isSeen]);
+  }, [searchParams, page, limit, search, isSeen]);
 
   // ==============================
   // CLEAR DEBOUNCE ON UNMOUNT

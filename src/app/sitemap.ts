@@ -16,6 +16,11 @@ const staticPages = [
   "/contact",
 ];
 
+type SitemapEntry = {
+  slug?: string | null;
+  updatedAt?: string | Date | null;
+};
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = staticPages.map((route) => ({
     url: `${baseUrl}${route}`,
@@ -31,9 +36,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       fetchServices(),
     ]);
 
-    const projectRoutes: MetadataRoute.Sitemap = (projects ?? [])
-      .filter((item: any) => item.slug)
-      .map((item: any) => ({
+    const projectRoutes: MetadataRoute.Sitemap = ((projects ?? []) as SitemapEntry[])
+      .filter((item) => item.slug)
+      .map((item) => ({
         url: `${baseUrl}/projects/${item.slug}`,
         lastModified: item.updatedAt
           ? new Date(item.updatedAt)
@@ -42,9 +47,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       }));
 
-    const blogRoutes: MetadataRoute.Sitemap = (blogs ?? [])
-      .filter((item: any) => item.slug)
-      .map((item: any) => ({
+    const blogRoutes: MetadataRoute.Sitemap = ((blogs ?? []) as SitemapEntry[])
+      .filter((item) => item.slug)
+      .map((item) => ({
         url: `${baseUrl}/blogs/${item.slug}`,
         lastModified: item.updatedAt
           ? new Date(item.updatedAt)
@@ -53,22 +58,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       }));
 
-    const serviceRoutes: MetadataRoute.Sitemap = (services ?? [])
-      .filter((item: any) => item.slug)
-      .map((item: any) => ({
-        url: `${baseUrl}/services/${item.slug}`,
-        lastModified: item.updatedAt
-          ? new Date(item.updatedAt)
-          : new Date(),
-        changeFrequency: "monthly",
-        priority: 0.7,
-      }));
-
     return [
       ...staticRoutes,
       ...projectRoutes,
       ...blogRoutes,
-      ...serviceRoutes,
     ];
   } catch (error) {
     console.error("Sitemap generation failed:", error);
