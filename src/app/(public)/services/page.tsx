@@ -28,8 +28,8 @@ const ServicesPage = async () => {
     <>
       {page.seo?.schema_markup && <JsonLd data={page.seo.schema_markup} />}
 
-      <section className="flex h-full w-full flex-col gap-8 py-8">
-        <div className="mx-auto w-full max-w-5xl space-y-8">
+      <section className="flex h-full w-full flex-col gap-8">
+        <div className="mx-auto w-full max-w-5xl space-y-8 py-8">
           <header className="space-y-4 border-b border-gray-200 pb-6 dark:border-gray-800">
             <p className="text-sm font-semibold uppercase tracking-widest text-teal-500 dark:text-teal-400">
               {page.title}

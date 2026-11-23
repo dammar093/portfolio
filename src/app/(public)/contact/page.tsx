@@ -71,7 +71,7 @@ const Contact = async () => {
     <>
       {page.seo?.schema_markup && <JsonLd data={page.seo.schema_markup} />}
 
-      <main className="py-10 md:py-14">
+      <main>
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-12">
           <div className="mx-auto w-full max-w-5xl space-y-8 py-8">
             <header className="space-y-4 border-b border-gray-200 pb-6 dark:border-gray-800">
