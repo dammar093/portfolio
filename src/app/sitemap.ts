@@ -4,7 +4,6 @@ import {
     baseUrl,
   fetchBlogs,
   fetchProjects,
-  fetchServices,
 } from "@/api/api";
 
 const staticPages = [
@@ -30,10 +29,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   try {
-    const [projects, blogs, services] = await Promise.all([
+    const [projects, blogs] = await Promise.all([
       fetchProjects(),
       fetchBlogs(),
-      fetchServices(),
     ]);
 
     const projectRoutes: MetadataRoute.Sitemap = ((projects ?? []) as SitemapEntry[])

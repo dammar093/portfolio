@@ -26,6 +26,27 @@ model User {
   @@index([id, email])
 }
 
+model AuthOtp {
+  id        String   @id @default(uuid())
+  email     String
+  purpose   String
+  codeHash  String
+  newEmail  String?
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([email, purpose])
+}
+
+model AuthRateLimit {
+  key             String   @id
+  attempts        Int      @default(0)
+  windowStartedAt DateTime @default(now())
+  blockedUntil    DateTime?
+  updatedAt       DateTime @updatedAt
+}
+
 model Project {
   id          String  @id @default(uuid())
   title       String

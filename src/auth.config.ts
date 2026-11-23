@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs"
 import type { NextAuthOptions } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { loginSchema } from "@/schema/auth-schema"
+import { clearAuthRateLimit, consumeAuthRateLimit, rateLimitKey } from "@/lib/auth-rate-limit"
 
 export default {
   providers: [
@@ -17,9 +18,14 @@ export default {
         if (!validInputFields.success) return null;
 
         const { email, password } = validInputFields.data;
+        const rateKey = rateLimitKey(`login-email:${email}`);
+        const rateLimit = await consumeAuthRateLimit(rateKey, 8);
+        if (!rateLimit.allowed) return null;
         const user = await prisma.user.findUnique({ where: { email } });
 
         if (!user || !(await bcrypt.compare(password, user.password))) return null;
+
+        await clearAuthRateLimit(rateKey);
 
         return {
           id: user.id,
