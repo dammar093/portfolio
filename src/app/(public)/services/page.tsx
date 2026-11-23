@@ -39,7 +39,7 @@ const ServicesPage = async () => {
             </h1>
           </header>
 
-          <article className="prose prose-lg max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-p:leading-8 prose-p:text-gray-600 prose-a:text-blue-600 prose-img:rounded-xl prose-img:shadow-sm dark:prose-invert dark:prose-p:text-gray-300">
+          <article className="rich-content max-w-none">
             <div
               dangerouslySetInnerHTML={{
                 __html: page.description || "",

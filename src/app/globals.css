@@ -126,3 +126,116 @@ body {
     cursor: pointer;
   }
 }
+
+/* Render HTML authored in the admin rich text editor with readable defaults. */
+.rich-content {
+  color: var(--foreground);
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.rich-content > :first-child {
+  margin-top: 0;
+}
+
+.rich-content > :last-child {
+  margin-bottom: 0;
+}
+
+.rich-content h1,
+.rich-content h2,
+.rich-content h3,
+.rich-content h4,
+.rich-content h5,
+.rich-content h6 {
+  margin-block: 1.4em 0.55em;
+  color: var(--foreground);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.rich-content h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); }
+.rich-content h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+.rich-content h3 { font-size: 1.375rem; }
+.rich-content h4 { font-size: 1.125rem; }
+.rich-content h5 { font-size: 1rem; }
+.rich-content h6 { font-size: 0.875rem; }
+
+.rich-content p {
+  margin-block: 0.9em;
+}
+
+.rich-content ul,
+.rich-content ol {
+  margin-block: 1em;
+  padding-inline-start: 1.6rem;
+}
+
+.rich-content ul { list-style: disc; }
+.rich-content ol { list-style: decimal; }
+.rich-content li { display: list-item; padding-inline-start: 0.2rem; }
+.rich-content li + li { margin-top: 0.35em; }
+.rich-content ul ul { list-style: circle; }
+.rich-content ol ol { list-style: lower-alpha; }
+
+.rich-content a {
+  color: #0f766e;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dark .rich-content a { color: #5eead4; }
+
+.rich-content blockquote {
+  margin-block: 1.5em;
+  border-inline-start: 4px solid #14b8a6;
+  padding: 0.25em 0 0.25em 1rem;
+  color: var(--muted-foreground);
+}
+
+.rich-content pre {
+  margin-block: 1.25em;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: color-mix(in oklab, var(--muted) 65%, transparent);
+  line-height: 1.55;
+}
+
+.rich-content :not(pre) > code {
+  border-radius: 0.25rem;
+  padding: 0.1em 0.3em;
+  background: color-mix(in oklab, var(--muted) 75%, transparent);
+}
+
+.rich-content img,
+.rich-content video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+}
+
+.rich-content table {
+  width: 100%;
+  margin-block: 1.25em;
+  border-collapse: collapse;
+  text-align: start;
+}
+
+.rich-content th,
+.rich-content td {
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.75rem;
+}
+
+.rich-content th {
+  background: color-mix(in oklab, var(--muted) 65%, transparent);
+  font-weight: 700;
+}
+
+.rich-content hr {
+  margin-block: 1.75em;
+  border-color: var(--border);
+}

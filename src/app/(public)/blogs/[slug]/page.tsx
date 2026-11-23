@@ -172,11 +172,11 @@ const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {
         )}
 
         {/* Content */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/10 dark:bg-white/[0.03] md:p-10">
+        <div className="bg-white dark:bg-[#18181B]">
           <BlogShare title={blog.title} slug={blog.slug} />
 
           <div
-            className="prose prose-base prose-gray mt-8 max-w-none break-words dark:prose-invert prose-headings:font-bold prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-h4:text-base prose-h1:mb-4 prose-h2:mt-8 prose-h2:mb-3 prose-h3:mt-6 prose-p:leading-7 prose-a:text-teal-600 dark:prose-a:text-teal-400 prose-blockquote:border-teal-500 prose-img:rounded-xl prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-white/10"
+            className="rich-content mt-8 max-w-none break-words"
             dangerouslySetInnerHTML={{
               __html: blog.description,
             }}

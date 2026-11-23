@@ -54,7 +54,7 @@ const FaqSection = async () => {
 
               <AccordionContent>
                 <div
-                  className="prose prose-sm prose-gray max-w-none dark:prose-invert prose-a:text-teal-600 dark:prose-a:text-teal-400"
+                  className="rich-content text-sm"
                   dangerouslySetInnerHTML={{ __html: faq.answer }}
                 />
               </AccordionContent>

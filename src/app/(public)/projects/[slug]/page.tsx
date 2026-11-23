@@ -92,7 +92,7 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
           </h2>
 
           <div
-            className="project-description prose prose-gray max-w-none dark:prose-invert prose-img:rounded-lg prose-a:text-blue-600"
+            className="rich-content project-description max-w-none"
             dangerouslySetInnerHTML={{
               __html: project.description || "",
             }}
