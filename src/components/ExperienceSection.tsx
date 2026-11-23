@@ -101,9 +101,9 @@ const ExperienceSection = async () => {
               className="text-teal-500 dark:text-teal-500"
             />
 
-            <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 md:text-2xl">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 md:text-2xl">
               Work Experience
-            </h1>
+            </h2>
           </div>
 
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">

@@ -15,9 +15,9 @@ const ProjectSection = async () => {
           <div className="flex items-center gap-2">
             <FolderCode className="h-6 w-6 text-teal-500 dark:text-teal-500" />
 
-            <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 md:text-2xl">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 md:text-2xl">
               Featured Projects
-            </h1>
+            </h2>
           </div>
 
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
