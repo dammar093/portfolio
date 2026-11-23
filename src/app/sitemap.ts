@@ -6,6 +6,8 @@ import {
   fetchProjects,
 } from "@/api/api";
 
+export const dynamic = "force-dynamic";
+
 const staticPages = [
   "",
   "/projects",
