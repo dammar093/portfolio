@@ -1,8 +1,9 @@
-import { baseUrl, fetchSeoSettings } from "@/api/api";
+import { baseUrl, fetchSeoSettings, fetchSetting } from "@/api/api";
 import RootProvider from "@/components/provider/RootProvider";
 import { SeoItem } from "@/types/seo-type";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -17,17 +18,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const setting = await fetchSetting();
+  const googleTagId = typeof setting?.g_tag === "string" ? setting.g_tag.trim() : "";
+  const isGoogleAnalyticsId = /^G-[A-Z0-9]+$/i.test(googleTagId);
+  const isGoogleTagManagerId = /^GTM-[A-Z0-9]+$/i.test(googleTagId);
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-200 dark:bg-[#18181B] text-gray-800 dark:text-gray-200`}
       >
         <RootProvider>{children}</RootProvider>
+        {isGoogleAnalyticsId && <GoogleAnalytics gaId={googleTagId} />}
+        {isGoogleTagManagerId && <GoogleTagManager gtmId={googleTagId} />}
       </body>
     </html>
   );
@@ -65,6 +73,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(baseUrl),
+
+    verification: {
+      google: "GTdx_eR2LWn0-hweXHbQ3AVd8QFLFhmLg_cpzAhP5Lg",
+    },
 
     title: {
       default: title,
