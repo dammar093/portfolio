@@ -7,6 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { Toaster } from "sonner";
 import ThemeProvider from "./ThemeProvider";
+import { ReactLenis } from "lenis/react";
 
 function AppToaster() {
     const { resolvedTheme } = useTheme();
@@ -19,6 +20,7 @@ children: React.ReactNode;
 
 const RootProvider = ({ children }: RootProviderProps) => {
 return (
+<ReactLenis root options={{ autoRaf: true, smoothWheel: true }}>
 <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
     <AppToaster />
     <SessionProvider>
@@ -27,6 +29,7 @@ return (
         </Provider>
     </SessionProvider>
 </ThemeProvider>
+</ReactLenis>
 );
 };
 
